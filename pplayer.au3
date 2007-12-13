@@ -31,6 +31,18 @@
 	http://pplayer.wiki.sourceforge.net/Contributors
 #ce
 
+Global $Delimiters = '|-|'
+If _Singleton("pplayermutex", 1) == 0 Then
+	If $CmdLine[0] > 0 Then
+		While Not WinExists("PPlayer")
+			Sleep(50)
+		WEnd
+		WinWaitActive("PPlayer - V")
+		_AU3COM_SendData("PPlayerPath" & $Delimiters & $CmdLine[1], "PPlayer")
+	EndIf
+	Exit 0
+EndIf
+
 If LoadSetting("infos","crash",0) == 1 Then
 	Info("It seems that PPlayer crashed")
 Else
@@ -68,17 +80,6 @@ FileChangeDir($PP_Dir)
 #include"include\default\GUIConstants.au3"
 #include"include\default\GuiComboBox.au3"
 #endregion
-Global $Delimiters = '|-|'
-If _Singleton("pplayermutex", 1) == 0 Then
-	If $CmdLine[0] > 0 Then
-		While Not WinExists("PPlayer")
-			Sleep(50)
-		WEnd
-		WinWaitActive("PPlayer - V")
-		_AU3COM_SendData("PPlayerPath" & $Delimiters & $CmdLine[1], "PPlayer")
-	EndIf
-	Exit 0
-EndIf
 
 Global $PP_HP = "http://pplayer.sourceforge.net/access/"
 
@@ -1722,9 +1723,9 @@ Func StartGUI()
 	GUICtrlCreateMenuItem("Statistic", $Menu)
 	GUICtrlSetOnEvent(-1, "Stat")
 	If $PluginMenus[0][0] > 0 Then
-		$PluginMenu = GUICtrlCreateMenu("Plugins", $Menu)
+		$PluginMenu = GUICtrlCreateMenuItem("", $Menu)
 		For $i = 1 To $PluginMenus[0][0]
-			GUICtrlCreateMenuItem($PluginMenus[$i][1], $PluginMenu)
+			GUICtrlCreateMenuItem($PluginMenus[$i][1], $Menu)
 			GUICtrlSetOnEvent(-1, $PluginMenus[$i][0])
 		Next
 	EndIf
