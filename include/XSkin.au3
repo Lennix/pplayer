@@ -60,7 +60,6 @@
 	;===============================================================================
 #ce
 #include-once
-;#include <GUIConstants.au3>
 ;Opt("MustDeclareVars", 1)
 Dim $CtrlIDA[1], $CtrlIDB[1], $CtrlIDC[1], $CtrlIDMA[3], $CtrlIDMB[3], $XS_gui[1], $Skin_Folder, $Icon_Folder, $iLoop, $XS_debug = 0
 Dim $over_color, $btn_color, $bkg_color, $fnt_color, $tile_size, $XS_TMB, $XS_TMA, $SKBox_[2], $XSkinID[1]

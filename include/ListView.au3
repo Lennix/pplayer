@@ -1,15 +1,5 @@
  ;_GUICtrlListView.au3 _126  
 #include-once
-#cs Old includes
-	#include <GuiConstants.au3>
-	#include <GuiListView.au3>
-	#include <misc.au3>
-	#include <file.au3>
-	#include <Process.au3>
-	#Include <GuiTab.au3>
-	#include <Constants.au3>
-	#include <Date.au3>
-#ce
 	#include "default\GuiConstants.au3"
 	#include "default\GuiListView.au3"
 	#include "default\misc.au3"
