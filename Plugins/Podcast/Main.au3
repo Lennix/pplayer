@@ -122,16 +122,54 @@ Func Podcastplay()
 	$Programs = _StringBetween(FileRead("db\Podcast.ppd"), "<item>", "</item>")
 	$URL = _StringBetween($Programs[_GUICtrlComboBox_GetCurSel($PodcastPodcasts) ], '<enclosure url="', '"')
 	$Name = StringTrimLeft($URL[0], StringInStr($URL[0], "/", 1, -1))
-	If FileExists("Radio\" & $Name) Then
-		SetList("Radio\" & $Name)
-	Else
+	If PluginExists("Stream") Then
 		SetList($URL[0])
+	Else
 		Podcastload($URL[0], "Radio\" & $Name)
+		SetList( "Radio\" & $Name)
+		sleep(5000)
+		GUIDelete($Download_GUI)
 	EndIf
 EndFunc   ;==>Podcastplay
 
 Func Podcastload($URL, $path)
-	Run('resource\download.exe "' & $URL & '" "' & $PP_DIR & "\" & $path & '" "blah"')
+	Global $Download_GUI = GUICreate("PPlayer Downloader", 500, 150)
+	GUISetBkColor("0x" & IniRead("db\settings.ini", "settings", "opt6", "000000"))
+	$Download_Label = GUICtrlCreateLabel("Loading...",90, 10, 400, 110)
+	GUICtrlSetColor(-1, "0x" & IniRead("db\settings.ini", "settings", "opt7", "FFFFFF"))
+	GUICtrlCreateLabel("Downloading..." & @CRLF & "URL: " & @CRLF & @CRLF & "Loaded: " & @CRLF & "Time left:" & @CRLF & "Done: ",10,10,80,110)
+	GUICtrlSetColor(-1, "0x" & IniRead("db\settings.ini", "settings", "opt7", "FFFFFF"))
+	$Download_Progress = GUICtrlCreateProgress(10, 120, 480, 20)
+	GUISetState(@SW_SHOW)
+	$size = InetGetSize($URL)
+	If @Error Then
+		GUICtrlSetData($Download_Label, "Download failed")
+		return False
+	Else
+		$Start = TimerInit()
+		InetGet($URL, $path, 1, 1)
+		If StringLen($URL) > 60 Then 
+			$URL = StringLeft($URL,60) & @CRLF & StringRight(StringTrimLeft($URL,60),StringLen($URL)-60)
+		Else
+			$URL &= @CRLF
+		EndIf
+		If $size == 0 Then $size = InetGetSize($URL)
+		While @InetGetActive == 1
+			If GUIGetMsg() == -3 Then Exit
+			Sleep(10)
+			$Message = @CRLF & $URL & @CRLF & _
+			Round(@InetGetBytesRead / 1048576,1) & "MB/" & Round($size / 1048576,1) & "MB @ " & Int((@InetGetBytesRead/1024)/(TimerDiff($Start)/1000)) & "kb/s" & @CRLF
+			If $size > 0 Then
+				$Message &= Round((Round(TimerDiff($Start)/1000,2)/Round(@InetGetBytesRead / $size * 100))*(100-Round(@InetGetBytesRead / $size * 100))) & " seconds" & @CRLF & _
+				Round(@InetGetBytesRead / $size * 100) & "%"
+			Else
+				$Message &= "--" & @CRLF & "--"
+			EndIf
+			GUICtrlSetData($Download_Label,$Message)
+			GUICtrlSetData($Download_Progress, Round(@InetGetBytesRead / $size * 100))
+		WEnd
+	EndIf
+	return True
 EndFunc   ;==>Podcastload
 
 Func Podcastdelete()
