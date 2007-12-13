@@ -82,6 +82,9 @@ Global $Plugins[1]
 Global $PluginMenus[1][2]
 Global $PluginSettingsTabs[1]
 
+If Not FileExists("Plugins\Plugins.au3") Then
+	FileWrite("Plugins\Plugins.au3",";Internal Pluginmanagement")
+EndIf
 #include "Plugins\Plugins.au3"
 
 PluginTrigger("OnPluginsRegistered")
