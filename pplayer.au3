@@ -1686,7 +1686,6 @@ Func StartGUI()
 	GUISetStyle(-1, $WS_EX_ACCEPTFILES, $MainGUI)
 	XSkinIcon($MainGUI, 3, StringSplit("logoff|Hide|Help", "|"))
 	GUISetIcon("icos\pplayer.ico")
-	
 	Global $lieder = GUICtrlCreateListView("", GIR("lieder", "left"), GIR("lieder", "top"), GIR("lieder", "width"), GIR("lieder", "height"), $LVS_NOCOLUMNHEADER + $LVS_SHOWSELALWAYS)
 	GUICtrlSetBkColor(-1, "0x" & GetOpt("BkColor"))
 	GUICtrlSetColor(-1, "0x" & GetOpt("TextColor"))
