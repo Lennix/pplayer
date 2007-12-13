@@ -174,7 +174,7 @@ To Fix:
 => BugReport -> kein Obj mehr
 => "Error" in expression beim Stream (error-checking: is es wirklich ein stream den ich spielen kann)
 => Rating mit buttons oder so
-=> Anzeige im Stream-Fenster wie mitter Connection aussieht
+=> Anzeige im Stream-Fenster wies mitter Connection aussieht
 => Wiedergabelisten-Dateien auslesen können (streams!)
 => Trayicon
 
