@@ -1,0 +1,563 @@
+ToDo:
+
+* GoogleVideo Plugin:
+=> YouTube/GVideo/MyVideo center (to choose website)
+=> Erkennt wenn ein Video angeschaut wird (wenn ein video längere Zeit angeschaut wird) und merkt sich den titel/author/url/filetype (YouTube Video)
+=> Erkennt wenn ein Lied gehört wird (Analysiert den Titel nach bekannten Komponenten - "Titel - Interpret")
+==> Speichert diese Informationen für die Suche (Similars bands etc)
+=> Öffnet sich beim starten einer gewissen URL automatisch und spielt das video ab
+==> Erkennt wenn es Verzögerungen beim Laden gibt und bricht ggf. ab
+=> Lieder vom FileType YouTube,GVideo etc können ebenfalls gerated werden etc
+
+* OnHover Icons ^ OnButtonClicked Icons
+
+* StreamRevipe:
+- New GUI
+- ListView containing Stream with more info
+- Label for connecting info
+- vllt. Suchfenster und Streamlisten (Streamsharing über IRC-Netz (sollte bald mal aufgebaut werden) / oder Inet-Plattform)
+
+Offline: Skins!! (Installer)
+
+- 0.9.*:
+* Reviped Transfer:
+=> Uses sets a external folder
+=> PPlayer analyses the external folder
+=> PPlayer analyses the statistic
+=> PPlayer copies and deletes files on/to the external folder matching some parameters
+
+* Icons:
+=> Icons are downloadable like skins and chooseable on the Generaltab in the settings
+=> Changing icons is possible on runtime
+
+* Pluginfähigkeit:
+=> Sämtliche "Nicht-Kern-Funktionen" in Plugins auslagern um Performance zu sparen -> Fast fertig
+=> PluginTab in Settings -> Sollte getan werden
+=> PluginPortal fürs Downloaden -> Zusammen mit 2.
+
+* Plugins:
+=> Lyrics -> Done
+=> Podcast -> Done
+=> Debugger -> Done
+=> Stream -> Events created
+=> GoogleVideo (GUI with window/saving url and name for database)
+=> Updater (Cutting AutoUpdate out of PPlayer) -> Done (Mit Plugins: ob man check oder update drückt ist das gleiche...)
+=> BugReport
+
+* Global Statistic
+=> Gathers infos of the database and creates a TOP 10 (might be difficult)
+=> Suche nach nutzern mit gewissem Musikgeschmack
+
+* Settings:
+=> Add a setting to PlayMode-TAB for choosing tracks (via keyword) that should not be choose by autosearch
+
+- Settings:
+=> ToDo: Mehr settings (already done)
+---> Mit 0.8.4.5 verbessert
+
+- Transfer:
+-> Transfer vielleicht mit der Funktion des Players intelligent Musik zu suchen.
+=> Durchführbar mit Statistik
+==> Lieblingslieder werden übertragen
+-> Auto-Drivesearch (a-z removeable)
+---> Inaktiv
+
+- Playmode:
+-> Lieder unlocken wenn suche fehlgeschlagen:
+=> User vorher informieren
+=> Lieder unlocken Wenn Album leer dann Band wenn dann leer dann similar bands
+-> SetNext und Research vereinigen
+-> wenn setnext fehlschl?gt soll das letzte lied versucht werden usw.
+
+==> Search should always return a song
+
+-> outqueue soll übersprungene lieder beachten! Inqueue sollte lieder lieder unterhalb des liedes führen (vllt statt queue eine echtzeitabfrage)
+---> Mit 0.8.4 verbessert
+
+- PodCast:
+-> Download von Play trennen
+---> Mit 0.8.1 verbessert
+
+- Datenbank:
+---> Mit 0.9 verbessert
+
+- Design/GUI:
+Sachen fürs Designupdate:
+- Skintab in den Settings -> Done
+- Webseite für Skinverteilung -> Done
+- Skin = kxf-Dateien und später: Skins fürs XSkin (in zip?) -> ToDo
+- Alle GUI's mit XSkin und mit kxf-Datei -> ~Done - Every GUI with kxf useless
+- XSkin Global setzen und kxf-Datei pro GUI => Done
+
+-> GUI in MiniMode (done with trayicon...) -> Would be nice (difficult - rewrite of many things needed)
+-> Helpbuttons überall (erstmal GUI's) -> "?" on WinTitle
+-> Button auf HauptGUI fürs Slide in vom Playmode
+-> Mitwirkende als auf GUI
+
+-> Multilanguage via Languagefile, 
+=> übersetzbar von google -> nicht umsetzbar -> brauche übersetzer
+=> Langsam wichtiger
+
+=> SkinSystem:
+- Skins mit Rating (Rating vom User) (in Info anzeigen)
+
+---> Mit 0.9 verbessert
+
+- Sonstige:
+=> Embedded SongQueue with Explorer (CheckUDP slowing PPlayer down)
+
+- Bugs:
+-> Probleme mit XTrayBox
+-> Lautstärke nach Lied nicht bei standardwert
+-> Lieder werder häufig nach kurzer Zeit wieder gespielt
+-> TCP fixen -- Lieder chronologisch einordnen // sehr strange - wenn man über windoof einordnet ist es chronologisch ansonsten willkür
+=> AutoIt-Error (Array) wenn Lied nicht in DB?
+
+- For 0.9:
+-> Mid prio:
+=> Update wiki -> Done (Umleitungen einrichten und seite allmählich löschen)
+=> Update "PPlayer" on the blog
+=> Create article for autoit-forum -> Done
+=> Create article for sourceforge -> Done
+=> Create article for blog
+=> News @ PPlayer?
+=> Portaleinbindung in die Anwendung
+
+-> PPlayer - Portal (SkinUpload realizeable through button ("Upload a skin") -> upload.php overwrite
+- SkinUpload
+- Global Statistic:
+=> Top Artist etc. global
+=> Tagging system for users
+
+
+=> Create english Wikipedia-Article and update the german one
+-> DatabaseChanges: PPlayer should only create a database on userrequest (collecting data is possible) -> Done (Started alpha 0.9)
+-> Low prio:
+=> Contributors GUI
+=> Multi-Lang
+
+- Herausforderungen:
+-> Zusammenführung von SetNext + Research:
+-> Veränderung an Playing:
+=> Zweite Ausführung von Playing sollte abgeschafft werden
+
+Done:
+PPlayer:
+
+=> 0.9.5:
+- Fixed:
+=> Typo (databse) -> oT
+=> Crash on Rate -> oT
+=> Pluginerrors ($GUI missing) -> oT
+=> Downloading Plugin hungs up PPlayer (sometimes) -> done?
+=> Shuffle/Repeat/Repeat all now working - oT
+=> Crash on LoadSongInfo -> oT
+=> Focusing should work now correctly -> oT
+=> PPlayer unusable after hungup while downloading plugins (Plugins.au3 deleted) -> oT
+=> Bug with liste
+=> Deleting many items on PlayList causing PPlayer to crash -> oT
+=> Skindatabase not responding -> oT
+=> Rate crashing when no song selected -> oT
+- Changed:
+=> PPlayer starting after creating database first time -> oT
+=> Faster songinfoload -> oT
+=> Timer for plugindownload -> oT
+=> Webannounce after deleting GUIs -> oT
+=> Faster WM_Notify -> oT
+
+To Fix:
+=> Lautstärke..
+=> Taskleiste -> Quit -> oT
+=> Statistic lil buggy (especially songview)
+=> PPlayer SongView - one unique song entered with 2 genres (2 songs)
+=> Error beim Stream
+=> BugReport -> kein Obj mehr
+=> "Error" in expression beim Stream (error-checking: is es wirklich ein stream den ich spielen kann)
+=> Rating mit buttons oder so
+=> Anzeige im Stream-Fenster wie mitter Connection aussieht
+=> Wiedergabelisten-Dateien auslesen können (streams!)
+=> Trayicon
+
+=> 0.9.5 beta:
+- Added:
+=> Pluginsystem with PHP-Backend for the plugins. Possibility to en/disable plugins and get some information about them. Autodownloads not existing plugins.
+=> BugReport Plugin: The BugReport-Plugin opens the user the possibility to help developing PPlayer. Any bug found can be submitted easily through the plugin. Feature or Pluginrequests can easily done on this way too.
+=> Some error-msgs
+- Fixed:
+=> Links writable on SongView-Tab
+=> Chinese Version error
+=> Playlist scrolling (not approved)
+=> SongInfodisplay showing crap (Time)
+=> PPlayer playing next song but showing info of last song
+=> Smoother startup due to saving some inputs from PHP-Backend
+=> Readded "Offline"- Msg for SongView
+- Changed:
+=> Time needed for song rated and heard highered
+
+
+=> 0.9.4
+- Fixed:
+=> SetNext using old method to capture errors
+=> CmdLine-Add should work now
+- Changed:
+=> Added setting to disable statusbar (Default: Off)
+
+=> 0.9.3
+- Updater-Plugin: 
+=> The Updater-Plugin now also updates plugins. This is one step on the way to 0.9.5 (Plugin-Update). 
+
+=> 0.9.2.5
+- Updater-Plugin: 
+=> The new plugin replaces the old autoupdater of PPlayer. It works with more files and can be disabled in the settings. 
+- Bugfixes: 
+=> Some bugs crashing PPlayer are now fixed. One bug is still crashing PPlayer while closing. I'm currently working on a fix. 
+
+=> 0.9
+- Added:
+=> kxf-file can be changed file Koda so that the user can change the position of each control on
+==> MainGUI
+==> PlayMode
+-> XSkin available for
+==> MainGUI
+==> PlayMode
+==> PodCast
+==> Stream
+==> Statistic
+-> XSkin can be changed in the settings and downloaded
+=> There are 20 designs available
+=> XSkin can be uploaded via upload.php on website (published for every PPlayer-User) (not yet implemented) (button on settings)
+=> Lyrics
+==> ToDo: Use Wikisearch to get more
+==> Create Wiki-Article about Lyrics
+- Changed:
+-> PlayMode-GUI:
+=> The PlayMode-GUI should now be more understandable and is clearly arranged.
+==> A button was added to start an AutoSearch manually
+=> After Color and skinchanges PPlayer asks for restart
+=> PPlayer only creates a database on userrequest
+=> Updater can update itself in one updateturn
+=> Updater updates just every hour
+- Fixed:
+=> Line -1 fixed (or not)
+=> SQL-Queries fixed (" and ')
+=> Fixed SongView parsing & wrong (replacing & with + now)
+=> Problem with settings written after install (db folder did not exist)
+=> Updater and PPlayer starting in turns crashing the system
+
+=> 0.8.7
+- Added:
+-> Statistic
+=> Any song will be logged and showed in a statistic
+=> Many modes avaiable like "Artist/Album/Genre/Track" and timespans like "Lifetime/Month/Week/Day"
+- Changed:
+-> PPlayer - Search now can be used with "-" as negative param ("Billy -live") will list all songs from "billy" without "live"
+
+=> 0.8.7.1
+- Changed:
+=> Keywordinput is now a combobox remembering searches
+=> Some design changes for SongView
+==> SongView Profile now uses same colors as PPlayer does
+- Fixed:
+=> Fixed some bugs around the Statistic
+
+=> 0.8.7.2
+- Changed:
+=> SetNext will ignore songs with rating 1
+=> Speed of SetNext increased
+
+=> 0.8.7.5
+- Changed:
+=> StatCalculate speedup
+- Fixed:
+=> Minor bug in AddToDB fixed, now working
+
+=> 0.8.6
+- Changed/Added:
+-> SQL-Database:
+=> Queries about 75 times faster (pre 1.5sec, now 0,02sec)
+=> Especially similar band queries / for example addings
+=> Update includes new Database.exe and a convertation within PPlayer
+
+=> 0.8.4? (0.8.3.6)
+- DelFromList nutzt Outqueue
+- Bugs in created 0.8.3 fixed now ;)
+=> Slider works
+=> list works fine
+- TrayMenu nur noch rightclick
+- Outqueue fixed
+- IniWrite fixed ([,])
+- Wenn Keywordsuche bei Autosearch aktiviert dann führt er Keywordsuche mit Autoselect durch
+-> Leiste oberhalb der Parameter abschaffen
+=> Wenn keyword eingegen -> Keyword suche
+==> das system eventuell überdenken
+- ListView von Research sortierbar
+-> Autosearch und Autoselect besser/verständlicher machen (-> Hilfe button inner Playmode)
+
+=> 0.8.4
+- ListView sortable
+
+=> 0.8.4.5
+- Updated Settings
+(- siehe Wiki)
+
+=> 0.8.4.6
+- Datenbankupdate
+-> Suchfunktion eingebaut
+-> Schnelleres Finden von Dateien auf großen Festplatten
+=> Schnelleres Einordnen von Dateien
+- Automatische Suchfunktion beim ersten Start
+
+=> 0.8.4.7
+- Fixed:
+-> Some songs were skipped after loading songinfo (similar bands)
+- Changed:
+-> Database.ppd no longor carries similar bands -- similar.ini does -- less load
+-> Sorting disabled when more than 100 songs are found
+-> Sorting cancelable when more than 100 songs are found (preventing crash)
+- Added:
+-> Volume fades with ani
+
+=> 0.8.4.8
+- Fixed:
+-> $similar wurde bei UnknownAll nicht als neues Array gesetzt
+- Changed:
+-> Algorithm for Rating changed:
+=> Songs with higher rating than 11 now will be chosen more often
+=> Songs with rating less 9 less
+-> SetNext no longer searches for similar bands if not requested!
+
+=> 0.8.4.9
+- Fixed:
+-> SetNext totally bugged up
+=> Every Mode will work now ;)
+=> Little SpeedUp
+
+==> 0.8.3
+- siehe wiki
+
+==> 0.8.3.1
+- fixed a bug causing the player work not probably when disconnect from the net (and sometimes when server doens't reply)
+- fixed a bug request not recognizing that its disconnect and that there were an error on loading
+
+==> 0.8.3.2
+- similar beschleunigt (nur einmal pro interpret laden)
+- cover nur laden wenn nicht vorhanden
+- fileexists prüfungen
+- lieder nahezu ohne unterbrechung spielen
+
+=> 0.8.3.3
+- bug mit xskintraybox fixed
+
+=> 0.8.3.4
+- fixed a bug causing errors in playlist
+-> everything around the updates in 0.8.3 are fixed now
+- fixed a bug causing last time played showing the wrong time
+- InQueue für alle Lieder in der Liste!
+
+=> 0.8.3.5
+- SongView (Alpha)
+- Updaterbug fixed (finally)
+
+
+==> 0.8.2
+- Keywordsearch mit "Genre/Band/Album" erweitert
+- Similar[0] bug gefixt
+- Autoselect eingebaut
+- Databasecalc 1000% faster
+
+==> 0.8.2.2
+- Internetstream abspielbar
+- Menu in Kontextmenu
+- Lieder mit KM zum löschen
+- StreamInput
+
+==> 0.8.2.3
+- GUI für Stream mit Locsave
+- Extra Playingabschnitt für Streams um an Name ranzukommen
+
+==> 0.8.2.4
+- Copy'n'Paste bug ($Pos) fixed
+- LoadSongInfo erweitert
+- UDP schnittstelle wieder minimiert um:
+- Script obfuscated
+- Database obfuscated
+- Updater mit neuer request variante
+- Menu fixed
+
+==> 0.8.2.5
+- PPlayer for free.
+
+
+==> 0.8.1
+- PodCast delete
+- Paar fixes im PodCast
+- Downloader gefixt
+- Neue Request variante
+
+==> 0.8.1.3
+- Playmode mit eigener GUI
+- Playmode erweitert mit Keyword suche
+- Autosearch abschaltbar
+
+==> 0.8.1.4
+- ChildGUI Open/Close wird gespeichert und abgerufen beim start
+- Pos von Playmode wird gespeichert wenn geöffnet
+
+==> 0.8.1.5
+- Wiedergabe endlich gefixt
+- UnknownAll erweitert
+- Database bisschen rumgebastelt
+- Database fixed
+
+==> 0.8.1.6
+- GUIs sind Childfenster des Player und spammen die Taskleiste nicht mehr
+- Neuer Installer
+
+==> 0.8.1.8
+- Vorläufer der Suchefunktion fertig
+
+==> 0.8.1.9
+- Probleme mit WMObj gefixt
+- Bugs mit Similar gefixt
+- Anzeige wenn keine Bands in Datenbank sind
+
+
+==> 0.8.0.5
+(- Wiedergabe ?berarbeiten:
+-> WMP-Object ausnutzen um an Medieninformationen zu kommen
+-> Wiedergabe ?ber WMP-Object -> Internetstream m?glich / mehr codecs
+-> Filme abspielbar machen)
+- Neues Wiedergabesystem über WM
+-> Mehr Codecs verfügbar
+- Verbesserter Updater
+- Popup/MainGUI fix
+- Bug im Zusammenhang mit BuildGUI gefixt
+
+==> 0.8.0.6
+- Playmode fix
+- DRM lauffähig mit neuer Musikengine
+- Bugfix: Wiedergabe ging nicht weiter, da Pos = 0
+
+==> 0.8.0.7
+- Bugfix die 2te: Diesmal mit workaround gefixt
+- %g für Genre als Parameter
+- Per Doppelklick in der Liste ein Lied abspielen
+- Bugfix die 3te: Diesmal alte Bugfixmethode bloß erweitert
+
+==> 0.8.0.9
+- PodCast erweitert und verbesser:
+-> Alle PodCast nun abspielbar
+-> PodCastfunktionen beschleunigt
+
+
+PascalsPlayer
+==> 0.7.2
+- Negatives Rating wenn Lied nicht zuende -> Done,Tested,Works
+- AdjustTitel schnittstellenf?hig -> Done,Tested,Works
+-> Liedblockade erweitert und auf 60 Minuten erh?ht -> Done,Tested,Works
+
+==> 0.8
+- Listen Update ("LiedName - Interpret") -> Done, Tested, Works
+- Fixed Fehler mit [] im FIlename -> Done, Tested, Works
+
+==> 0.8.5
+- Similar Bands -- die man besitzt -> Done,Tested,Works
+- Fehler: Zahlen + "-" im Liednamen werden nicht aufgelist ---> Done, L?uft soweit
+=> Neues System: keine Probleme mehr mit Filenames
+- Eingebaute Progressbar f?r Datenbank -> Done,Tested,Works
+=> Code komplett umgeschrieben und schnittstellenf?hig gemacht
+==> MP3 Tag -> Done,Tested,Works
+- Fehleranalyse an den Orten wo Fehler auftreten k?nnen -> mehr @error -> Done,Tested,Works
+
+==> 0.9
+- Steuerung ?ber Media-Tasten -> Done,Tested,Works
+	
+==> 1.0:
+- wliste modifizieren (Del/Up/Down)
+- Hardcoded Trialcheck
+- Database 'add' ?berdenken (ver?ndertes rating)
+- DatabaseFehler (Parsename -> GetExtProp)
+-> Fixed (lag am '\' wenn mit angegeben)
+- @YDay ?ber den Server abfragen
+- Mehrere Songs einreihen
+- "Vern?nftiger Installer"
+- Alles auf Englisch
+- Datenbank update
+-> Aus MainDB das Rating auslesen
+-> In DB nachschauen ob existiert
+- Slider f?r Zeit
+- Fehler: Manche Lieder werden nicht abgespielt?
+- Rating komplettieren -> 80%
+- Up/Down/DelFromList fixen
+- Manuell Raten
+-> Grafische Oberfl?che f?rs Raten
+- Grafische Oberfl?che zum ?bertragen von Musik -> Done,L?uft aber noch nicht
+- erweitertes Error-System
+-> ErrorLog (Online/Offline)
+
+==> 1.0.4
+- Info_Label fixen (nicht in n?chste zeile) ohne punkte *hust*
+- Nutzer irgendwie ?ber MD5 ein Register-Link schicken (Premium-Update) -- Key ?ber webserver
+- Datenbank ?berarbeiten
+-> Neues Wiedergabesystem (?ber interpret/?hnliche bands/genre) -- SetNext ?berarbeiten -- ben?tigt datenbankupdate
+
+==> 1.0.4.8
+- Einblendung gefixt
+- PODCast insoweit erweitern, dass der Benutzer den PodCast manuell hinzuf?gen kann
+- Einlesen von mehreren Liedern
+-> TCP-Einbindung
+- Mehr Datenbankfunktionen: zB Add/Delete/Modify etc -- Queryfunktionen ?berarbeiten
+
+==> 1.0.5
+- Popupfix
+- Windowpos merken
+- Datenbank komplett eingebunden + fixes
+
+==> 1.0.6
+- Podcastdownload (oder download allgemein) ?ber externe exe durchf?hren
+- Podcastsendungen als liste anzeigen und button mit "play" zum starten dranh?ngen
+
+==> 1.0.7
+- Datenbanksuche abbrechen
+- PodCast notify
+
+==> 1.0.7.1
+- Versuche chronologisch einzureihen
+-> fehlgeschlagen
+- Ladebalken
+
+==> 1.0.7.2
+- Del fixed!
+
+==> 1.0.7.3
+- Neue CheckUDP-Variante, um ALLE Funktionen ?ber UDP zu callen. (mit params ;))
+
+==> 1.0.7.4
+- Mehrere Files per Drag&Drop
+
+==> 1.0.7.5
+- Coverload fixed wenn kein Datenbankdurchlauf gemacht wurde
+
+==> 1.0.7.6
+- GetOpt lauffähig
+- %a als Albumparameter für die ChangeMSN-Funktion
+- Code aufgeräumt
+- Code optimiert an machen stellen
+- Code wieder Windowsfähig (temporär für linux umgeschrieben)
+
+==> 1.0.7.8
+- Repeat-Funktion
+- Repeatall
+- Shuffle
+
+==> 1.0.8 alpha
+- Similar über Slider einstellbar
+- ToDo: debuggen -> viele bugs mit similar nun offener
+- GUIs überarbeitet (GUIBuild-Funktionen)
+- Ladevorgang erweitert
+- Direkte Infos im SetList()
+
+==> 1.0.8 beta
+- Coverload gefixt
+- Playmode verbessert (Shuffle/Repeat All nicht im SetNext Modus verfügbar)
+- Shuffle mit Zeitsperre von zZ Lieder * 3 Min

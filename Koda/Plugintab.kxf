@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<object type="TAForm" name="Form1">
+	<properties>
+		<property name="Left" vt="Int16">247</property>
+		<property name="Top" vt="Int16">229</property>
+		<property name="Width" vt="Int16">484</property>
+		<property name="Height" vt="Int16">388</property>
+		<property name="Caption" vt="String">Form1</property>
+		<property name="Color" vt="Ident">clBtnFace</property>
+		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+		<property name="Font.Color" vt="Ident">clWindowText</property>
+		<property name="Font.Height" vt="Int8">-11</property>
+		<property name="Font.Name" vt="String">MS Sans Serif</property>
+		<property name="Font.Style" vt="Set"/>
+		<property name="OldCreateOrder" vt="False">False</property>
+		<property name="Visible" vt="True">True</property>
+		<property name="Style" vt="Int32">-1798701056</property>
+		<property name="ExStyle" vt="Int16">256</property>
+		<property name="Version" vt="String">1.03</property>
+		<property name="PixelsPerInch" vt="Int8">96</property>
+		<property name="TextHeight" vt="Int8">13</property>
+	</properties>
+	<components>
+		<object type="TAListView" name="ListView1">
+			<properties>
+				<property name="Left" vt="Int8">0</property>
+				<property name="Top" vt="Int8">0</property>
+				<property name="Width" vt="Int16">473</property>
+				<property name="Height" vt="Int16">169</property>
+				<property name="Columns" vt="Collection">
+					<collection>
+						<item>
+							<property name="Caption" vt="String">Name</property>
+						</item>
+						<item>
+							<property name="Caption" vt="String">Author</property>
+						</item>
+						<item>
+							<property name="Caption" vt="String">Quick Description</property>
+							<property name="Width" vt="Int16">200</property>
+						</item>
+						<item>
+							<property name="Caption" vt="String">Activated</property>
+							<property name="Width" vt="Int8">60</property>
+						</item>
+						<item>
+							<property name="Caption" vt="String">Version</property>
+						</item>
+						<item>
+							<property name="Caption" vt="String">Rating</property>
+						</item>
+					</collection>
+				</property>
+				<property name="Items.Data" vt="Binary">
+					<bin>2800000001000000FFFFFFFFFFFFFFFFFFFFFFFF010000000000000004546573</bin>
+					<bin>7404426C6168FFFF</bin>
+				</property>
+				<property name="TabOrder" vt="Int8">0</property>
+				<property name="CtrlStyle" vt="Int32">1342242829</property>
+				<property name="CtrlExStyle" vt="Int16">512</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+		<object type="TAEdit" name="Edit1">
+			<properties>
+				<property name="Left" vt="Int8">0</property>
+				<property name="Top" vt="Int16">176</property>
+				<property name="Width" vt="Int16">473</property>
+				<property name="Height" vt="Int16">153</property>
+				<property name="Lines.Strings" vt="List">
+					<list>
+						<li vt="String">Edit1</li>
+					</list>
+				</property>
+				<property name="TabOrder" vt="Int8">1</property>
+				<property name="CtrlStyle" vt="Int32">1343297668</property>
+				<property name="CtrlExStyle" vt="Int16">512</property>
+				<property name="Resizing" vt="Set"/>
+			</properties>
+			<components/>
+		</object>
+	</components>
+</object>
