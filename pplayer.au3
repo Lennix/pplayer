@@ -31,6 +31,12 @@
 	http://pplayer.wiki.sourceforge.net/Contributors
 #ce
 
+If LoadSetting("infos","crash",0) == 1 Then
+	Info("It seems that PPlayer crashed")
+Else
+	SaveSetting("infos","crash",1)
+EndIf
+
 Global $Begin = TimerInit()
 #region Opts
 Global $version = "0.9.5 gamma"
@@ -1806,6 +1812,7 @@ Func logoff()
 		GUIDelete($MainGUI)
 		PluginTrigger("OnExit")
 		WebAnnounce("Offline")
+		SaveSetting("infos","crash",0)
 		If $Restart Then Run("pplayer.exe")
 		Exit 0
 	EndIf
