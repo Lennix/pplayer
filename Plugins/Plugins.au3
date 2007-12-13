@@ -1,12 +1,6 @@
-#cs ----------------------------------------------------------------------------
-
- AutoIt Version: 3.2.10.0
- Author:         myName
-
- Script Function:
-	Template AutoIt script.
-
-#ce ----------------------------------------------------------------------------
-
-; Script Start - Add your code below here
-
+#include "BugReport\Main.au3"
+#include "ChangeMSN\Main.au3"
+#include "Lyrics\Main.au3"
+#include "Podcast\Main.au3"
+#include "Stream\Main.au3"
+#include "Updater\Main.au3"
