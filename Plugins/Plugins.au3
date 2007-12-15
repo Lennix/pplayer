@@ -2,4 +2,5 @@
 #include "ChangeMSN\Main.au3"
 #include "Lyrics\Main.au3"
 #include "Podcast\Main.au3"
+#include "Stream\Main.au3"
 #include "Updater\Main.au3"
