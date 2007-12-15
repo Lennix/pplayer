@@ -59,12 +59,15 @@ EndFunc
 Func BugReportChoosen()
 	Switch @GUI_CtrlId
 		Case $BugReportRadio[0]
-			$BugReport_oIE.navigate("http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996243")
-			;ShellExecute("http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996243")
+			$Url = "http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996243"
 		Case $BugReportRadio[1]
-			$BugReport_oIE.navigate("http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996246")
-			;ShellExecute("http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996246")
+			$URL = "http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996246"
 		Case $BugReportRadio[2]
-			$BugReport_oIE.navigate("http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996245")
+			$URL = "http://sourceforge.net/tracker/?func=add&group_id=206085&atid=996245"
 	EndSwitch
+	If IsObj($BugReport_oIE) Then
+		$BugReport_oIE.navigate($URL)
+	Else
+		ShellExecute($URL)
+	EndIf
 EndFunc
