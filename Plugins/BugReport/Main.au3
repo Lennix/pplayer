@@ -35,6 +35,7 @@ Func BugReport_CreateCustomGUI()
 	Next
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	$BugReportLabel1 = GUICtrlCreateLabel("", 192+$FactorX, 0+$FactorY, 235, 49)
+	Global $BugReport_oIE
 	;Global $BugReport_oIE = _IECreateEmbedded()
 	;Global $BugReport_oIE = ObjCreate("Shell.Explorer.2")
 	;If IsObj($BugReport_oIE) Then GUICtrlCreateObj($BugReport_oIE, 0+$FactorX, 56+$FactorY, 624, 384)
