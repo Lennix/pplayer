@@ -177,6 +177,7 @@ To Fix:
 => Anzeige im Stream-Fenster wies mitter Connection aussieht
 => Wiedergabelisten-Dateien auslesen können (streams!)
 => Trayicon
+=> CVS-Rep for updater
 
 => 0.9.5 beta:
 - Added:
