@@ -140,7 +140,7 @@ EndFunc   ;==>Player
 Func Playing($id, $DND = False)
 	$Filepath = $liste[$id]
 	PluginTrigger("SongType" & StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1)), $id, $Filepath)
-	If StringLeft($Filepath, 4) = "http" Then PluginTrigger("SongIsStream", $id, $Filepath)
+	If StringInStr("http|mms",StringLeft($Filepath, 4)) Then PluginTrigger("SongIsStream", $id, $Filepath)
 	If $SongCapturedByPlugin Then
 		If Not $LeaveWhile And $Playing Then $activelistid += 1
 		$SongCapturedByPlugin = False
@@ -368,7 +368,7 @@ Func Play_active()
 		UpdateList($activelistid, $tag[3], $tag[1])
 	EndIf
 	UpdateLabelInfo($tag, $similar)
-	CalcPos($next_sound)
+	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	If FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then ; Load Cover if not exists
 		GUICtrlSetImage($ShowAlbum, "covers\" & $tag[1] & "-" & $tag[2] & ".jpg")
 		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
