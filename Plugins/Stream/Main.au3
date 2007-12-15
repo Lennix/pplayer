@@ -18,6 +18,8 @@ Func Stream_SongIsStream($id,$filepath)
 EndFunc
 
 Func Stream_Play($id, $Filepath)
+	$playing = True
+	$LeaveWhile = False
 	$Type = StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1))
 	If StringInStr("pls|asx|php",$Type) > 0 Then
 		$Found = False
@@ -42,8 +44,6 @@ Func Stream_Play($id, $Filepath)
 		$active_sound = Play($Filepath)
 	EndIf
 	PluginTrigger("SongPlayStarted",$id,$filepath)
-	$playing = True
-	$LeaveWhile = False
 	$next_sound = 0
 	If WMGetState() == "Paused" Then Pause()
 	Focus($id)
@@ -89,6 +89,7 @@ Func Stream_Play($id, $Filepath)
 		Sleep(100)
 	WEnd
 	WMStop()
+	UnFocus($id)
 EndFunc   ;==>PlayStream
 
 Func StreamBuild()
