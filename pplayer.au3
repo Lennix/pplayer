@@ -681,7 +681,7 @@ Func SettingsBuild()
 	
 	$Files = _FileSearch($PP_Dir & "resource", "*icos.dll", 0, '', True)
 	If @Error Then
-		If Error("Your Installation misses icons." & @CRLF & "You have to reinstall PPlayer." & @CRLF "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
+		If Error("Your Installation misses icons." & @CRLF & "You have to reinstall PPlayer." & @CRLF & "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
 	Else
 		GUICtrlCreateLabel("Iconset", 16, 184, 48, 17)
 		Global $SettingsCombo3 = GUICtrlCreateCombo("", 264, 184, 209, 25)
@@ -701,7 +701,7 @@ Func SettingsBuild()
 	
 	$Files = _FileSearch($PP_Dir & "resource", "*PPlayer.kxf", 0, '', True)
 	If @Error Then
-		If Error("Your Installation misses positionfiles." & @CRLF & "You have to reinstall PPlayer." & @CRLF "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
+		If Error("Your Installation misses positionfiles." & @CRLF & "You have to reinstall PPlayer." & @CRLF & "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
 		logoff()
 	Else
 		GUICtrlCreateLabel("Design for MainGUI", 16, 216, 150, 17)
@@ -722,7 +722,7 @@ Func SettingsBuild()
 	
 	$Files = _FileSearch($PP_Dir & "resource", "*PlayMode.kxf", 0, '', True)
 	If @Error Then
-		If Error("Your Installation misses positionfiles." & @CRLF & "You have to reinstall PPlayer." & @CRLF "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
+		If Error("Your Installation misses positionfiles." & @CRLF & "You have to reinstall PPlayer." & @CRLF & "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
 		logoff()
 	Else
 		GUICtrlCreateLabel("Design for PlayMode", 16, 248, 150, 17)
