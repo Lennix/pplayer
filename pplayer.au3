@@ -399,7 +399,7 @@ Func Play_active()
 		UpdateList($activelistid, $tag[3], $tag[1])
 	EndIf
 	UpdateLabelInfo($tag, $similar)
-	PluginTrigger("SongInformationLoaded", $id, $tag)
+	PluginTrigger("SongInformationLoaded", $activelistid, $tag)
 	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	If FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then ; Load Cover if not exists
 		GUICtrlSetImage($ShowAlbum, "covers\" & $tag[1] & "-" & $tag[2] & ".jpg")
