@@ -49,8 +49,8 @@ EndIf
 If LoadSetting("infos", "crash", 0) == 1 Then
 	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 298, 273, 186)
 	$Label1 = GUICtrlCreateLabel("PPlayer crashed... If this happened more than one time now you might consider downloading the latest version to make sure its a new bug." & @CRLF & "If you already download the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer.", 0, 0, 412, 201)
-	$Combo1 = GUICtrlCreateCombo("", 0, 208, 305, 25)
-	GUICtrlSetData(-1,"Submit BugReport|Download Installer|Reset Windowpositions")
+	$Combo1 = GUICtrlCreateCombo("", 8, 208, 290, 25)
+	GUICtrlSetData(-1,"Submit BugReport|Download Installer|Reset Windowpositions|Disable Plugins")
 	$Button1 = GUICtrlCreateButton("Run", 312, 208, 97, 25)
 	$Button2 = GUICtrlCreateButton("Continue PPlayer", 8, 240, 185, 49)
 	$Button3 = GUICtrlCreateButton("Close PPlayer", 224, 240, 185, 49)
@@ -69,6 +69,8 @@ If LoadSetting("infos", "crash", 0) == 1 Then
 						ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
 					Case "Reset Windowpositions"
 						IniDelete("db\settings.ini","window")
+					Case "Disable Plugins"
+						FileClose(FileOpen("Plugins\Plugins.au3",1))						
 				EndSwitch
 			Case $Button2
 				ExitLoop
