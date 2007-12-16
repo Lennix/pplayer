@@ -31,6 +31,9 @@
 	http://pplayer.wiki.sourceforge.net/Contributors
 #ce
 
+Global $PP_Dir = @ScriptDir & "\"
+FileChangeDir($PP_Dir)
+
 Global $Delimiters = '|-|'
 If _Singleton("pplayermutex", 1) == 0 Then
 	If $CmdLine[0] > 0 Then
@@ -44,25 +47,32 @@ If _Singleton("pplayermutex", 1) == 0 Then
 EndIf
 
 If LoadSetting("infos", "crash", 0) == 1 Then
-	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 190, 255, 202)
-	$Label1 = GUICtrlCreateLabel("PPlayer crashed... If this happened more than one time now you might consider downloading the latest version to make sure its a new bug." & @CRLF & "If you already download the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer.", 8, 8, 396, 145)
-	$Button1 = GUICtrlCreateButton("Download Installer", 8, 160, 113, 25, 0)
-	$Button2 = GUICtrlCreateButton("Submit bugs", 296, 160, 113, 25, 0)
-	$Button3 = GUICtrlCreateButton("Continue", 208, 160, 81, 25, 0)
-	$Button4 = GUICtrlCreateButton("Exit PPlayer", 128, 160, 73, 25, 0)
+	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 298, 273, 186)
+	$Label1 = GUICtrlCreateLabel("PPlayer crashed... If this happened more than one time now you might consider downloading the latest version to make sure its a new bug." & @CRLF & "If you already download the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer.", 0, 0, 412, 201)
+	$Combo1 = GUICtrlCreateCombo("", 0, 208, 305, 25)
+	GUICtrlSetData(-1,"Submit BugReport|Download Installer|Reset Windowpositions")
+	$Button1 = GUICtrlCreateButton("Run", 312, 208, 97, 25)
+	$Button2 = GUICtrlCreateButton("Continue PPlayer", 8, 240, 185, 49)
+	$Button3 = GUICtrlCreateButton("Close PPlayer", 224, 240, 185, 49)
 	GUISetState(@SW_SHOW)
 	While 1
 		$nMsg = GUIGetMsg()
 		Switch $nMsg
 			Case - 3
 				ExitLoop
-			Case $Button2
-				ShellExecute("https://sourceforge.net/tracker/?group_id=206085&atid=996243")
 			Case $Button1
-				ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
-			Case $Button3
+				debug(GUICtrlRead($Combo1))
+				Switch GUICtrlRead($Combo1)
+					Case "Submit BugReport"
+						ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
+					Case "Download Installer"
+						ShellExecute("https://sourceforge.net/tracker/?group_id=206085&atid=996243")
+					Case "Reset Windowpositions"
+						IniDelete("db\settings.ini","window")
+				EndSwitch
+			Case $Button2
 				ExitLoop
-			Case $Button4
+			Case $Button3
 				Exit 0
 		EndSwitch
 	WEnd
@@ -91,8 +101,6 @@ If Not @Compiled Then
 	EndIf
 EndIf
 
-Global $PP_Dir = @ScriptDir & "\"
-FileChangeDir($PP_Dir)
 #region Includes
 #include"include\WMP.au3"
 #include"include\XSkin.au3"
