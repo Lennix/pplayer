@@ -43,8 +43,8 @@ If _Singleton("pplayermutex", 1) == 0 Then
 	Exit 0
 EndIf
 
-If LoadSetting("infos","crash",0) == 1 Then
-	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 190,255, 202)
+If LoadSetting("infos", "crash", 0) == 1 Then
+	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 190, 255, 202)
 	$Label1 = GUICtrlCreateLabel("PPlayer crashed... If this happened more than one time now you might consider downloading the latest version to make sure its a new bug." & @CRLF & "If you already download the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer.", 8, 8, 396, 145)
 	$Button1 = GUICtrlCreateButton("Download Installer", 8, 160, 113, 25, 0)
 	$Button2 = GUICtrlCreateButton("Submit bugs", 296, 160, 113, 25, 0)
@@ -54,7 +54,7 @@ If LoadSetting("infos","crash",0) == 1 Then
 	While 1
 		$nMsg = GUIGetMsg()
 		Switch $nMsg
-			Case -3
+			Case - 3
 				ExitLoop
 			Case $Button2
 				ShellExecute("https://sourceforge.net/tracker/?group_id=206085&atid=996243")
@@ -67,9 +67,9 @@ If LoadSetting("infos","crash",0) == 1 Then
 		EndSwitch
 	WEnd
 	GUIDelete($Form2)
-	SaveSetting("infos","crash",1)
+	SaveSetting("infos", "crash", 1)
 Else
-	SaveSetting("infos","crash",1)
+	SaveSetting("infos", "crash", 1)
 EndIf
 
 Global $Begin = TimerInit()
@@ -142,7 +142,7 @@ Player()
 Func Player()
 	While 1
 		If $Playing And UBound($liste) > $activelistid Then
-			If GUICtrlRead($ModeCheck[2]) == "Repeat All" And $activelistid == UBound($liste) - 1 Then
+			If GUICtrlRead($ModeCheck[2]) == "Repeat All"  And $activelistid == UBound($liste) - 1 Then
 				$activelistid = 0 ;Repeat All
 			EndIf
 			UpdateLabelAction("Loading " & $liste[$activelistid])
@@ -163,7 +163,7 @@ EndFunc   ;==>Player
 Func Playing($id, $DND = False)
 	$Filepath = $liste[$id]
 	PluginTrigger("SongType" & StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1)), $id, $Filepath)
-	If StringInStr("http|mms",StringLeft($Filepath, 4)) Then PluginTrigger("SongIsStream", $id, $Filepath)
+	If StringInStr("http|mms", StringLeft($Filepath, 4)) Then PluginTrigger("SongIsStream", $id, $Filepath)
 	If $SongCapturedByPlugin Then
 		If Not $LeaveWhile And $Playing Then $activelistid += 1
 		$SongCapturedByPlugin = False
@@ -239,10 +239,10 @@ Func Playing($id, $DND = False)
 		PluginTrigger("NextSongAvailable")
 		If $next_sound = 0 Then
 			$oldlistid = $activelistid
-			If GUICtrlRead($ModeCheck[2]) == "Repeat" Then
+			If GUICtrlRead($ModeCheck[2]) == "Repeat"  Then
 				$next_sound = Play($liste[$activelistid])
 				UpdateLabelAction("Loading " & $liste[$activelistid])
-			ElseIf GUICtrlRead($ModeCheck[2]) == "Shuffle" Then
+			ElseIf GUICtrlRead($ModeCheck[2]) == "Shuffle"  Then
 				Play_active()
 			Else
 				$next_sound = Play($liste[$activelistid + 1])
@@ -264,7 +264,7 @@ Func Playing($id, $DND = False)
 		PluginTrigger("SongRatingDecreased", $id, $tag)
 		Rate($liste[$id], "-1")
 	EndIf
-	If GUICtrlRead($ModeCheck[2]) <> "Repeat" And Not $LeaveWhile Then $activelistid += 1
+	If GUICtrlRead($ModeCheck[2]) <> "Repeat"  And Not $LeaveWhile Then $activelistid += 1
 	GUICtrlSetState($ShowAlbum, $GUI_HIDE)
 	PluginTrigger("SongPlayed", $id, $tag)
 	UnFocus($id)
@@ -333,13 +333,13 @@ EndFunc   ;==>UnknownAll
 
 Func NextInList()
 	_GUICtrlListView_SetItemSelected($lieder, $activelistid, False)
-	If GUICtrlRead($ModeCheck[2]) <> "Shuffle" Then _GUICtrlListView_SetItemSelected($lieder, $activelistid + 1)
+	If GUICtrlRead($ModeCheck[2]) <> "Shuffle"  Then _GUICtrlListView_SetItemSelected($lieder, $activelistid + 1)
 	Play_active()
 EndFunc   ;==>NextInList
 
 Func PrevInList()
 	_GUICtrlListView_SetItemSelected($lieder, $activelistid, False)
-	If GUICtrlRead($ModeCheck[2]) <> "Shuffle" Then _GUICtrlListView_SetItemSelected($lieder, $activelistid - 1)
+	If GUICtrlRead($ModeCheck[2]) <> "Shuffle"  Then _GUICtrlListView_SetItemSelected($lieder, $activelistid - 1)
 	Play_active()
 EndFunc   ;==>PrevInList
 
@@ -353,17 +353,17 @@ Func Play_active()
 			$activelistid = Random(0, UBound($liste) - 1, 1)
 			If StringLen($liste[$activelistid]) > 0 Then
 				$tag = QueryDB($liste[$activelistid])
-				If IsArray($tag) And $tag[7] + ((UBound($liste) - 2) * 3) * 60 < _TimeGetStamp() Then 
+				If IsArray($tag) And $tag[7] + ((UBound($liste) - 2) * 3) * 60 < _TimeGetStamp() Then
 					$Done = True
 					ExitLoop
 				EndIf
 			EndIf
 		Next
 		If Not $Done Then $activelistid = Random(0, UBound($liste) - 1, 1)
-		If UBound($liste)-1 == 0 Then Return ""
-	ElseIf GUICtrlRead($ModeCheck[2]) == "Repeat" Then
+		If UBound($liste) - 1 == 0 Then Return ""
+	ElseIf GUICtrlRead($ModeCheck[2]) == "Repeat"  Then
 		$activelistid = $oldlistid
-	ElseIf GUICtrlRead($ModeCheck[2]) == "Repeat All" And $activelistid == UBound($liste) - 1 Then
+	ElseIf GUICtrlRead($ModeCheck[2]) == "Repeat All"  And $activelistid == UBound($liste) - 1 Then
 		$activelistid = 0 ;Repeat All
 	Else
 		$dClicked = True
@@ -377,7 +377,7 @@ Func Play_active()
 			$activelistid = $ItemSel[1]
 		EndIf
 	EndIf
-	If UBound($liste)-1 < $activelistid Then Return ""
+	If UBound($liste) - 1 < $activelistid Then Return ""
 	$oldlistid = $oldlistid2
 	$Playing = True
 	$dClicked = False
@@ -888,7 +888,7 @@ Func Settings_save()
 	SaveSetting("SongView", "name", GUICtrlRead($SongViewNickNameInput))
 	SaveSetting("SongView", "text", GUICtrlRead($SongViewTextInput))
 	
-	$FH = FileOpen("Plugins\Plugins.au3",2)
+	$FH = FileOpen("Plugins\Plugins.au3", 2)
 	For $i = 0 To _GUICtrlListView_GetItemCount($PluginsListView) - 1
 		If _GUICtrlListView_GetItemChecked($PluginsListView, $i) == True Then
 			$Plugin = _GUICtrlListView_GetItemText($PluginsListView, $i)
@@ -898,7 +898,7 @@ Func Settings_save()
 				InetGet($PP_HP & "downloads/Plugins/" & $Plugin & "/Main.au3", @TempDir & "PPlayerDownload", 1, 1)
 				$Size = InetGetSize($PP_HP & "downloads/Plugins/" & $Plugin & "/Main.au3")
 				$Timer = TimerInit()
-				While @InetGetActive Or TimerDiff($Timer) < $size * 2
+				While @InetGetActive Or TimerDiff($Timer) < $Size * 2
 					ProgressSet(@InetGetBytesRead / $Size * 100)
 					Sleep(10)
 				WEnd
@@ -1464,7 +1464,7 @@ EndFunc   ;==>UpdateLabelPos
 
 Func ChangePos()
 	WMSetPosition(GUICtrlRead($Pos_Slider))
-	GUICtrlSendMsg($Pos_slider,$WM_ENABLE,1,0)
+	GUICtrlSendMsg($Pos_Slider, $WM_ENABLE, 1, 0)
 EndFunc   ;==>ChangePos
 
 Func ChangeVol()
@@ -1509,7 +1509,7 @@ Func Rate($Filepath, $rate)
 		Dim $Query[1]
 		_SQLite_Query(-1, 'SELECT * FROM Songs WHERE Path = "' & $Filepath & '";', $hQuery) ; the query
 		_SQLite_FetchData($hQuery, $Query)
-		If @Error Then
+		If @error Then
 			_SQLite_QueryFinalize($hQuery)
 			Return ""
 		EndIf
@@ -1760,7 +1760,7 @@ Func StartGUI()
 	GUICtrlSetColor(-1, "0x" & GetOpt("TextColor"))
 	Global $pos_label = GUICtrlCreateLabel("00:00/00:00", GIR("pos_label", "left"), GIR("pos_label", "top"), GIR("pos_label", "width"), GIR("pos_label", "height"))
 	GUICtrlSetColor(-1, "0x" & GetOpt("TextColor"))
-	Global $Pos_Slider = GUICtrlCreateSlider(GIR("pos_slider", "left"), GIR("pos_slider", "top"), GIR("pos_slider", "width"), GIR("pos_slider", "height"), BitOR($TBS_BOTH,$TBS_NOTICKS,$TBS_FIXEDLENGTH))
+	Global $Pos_Slider = GUICtrlCreateSlider(GIR("pos_slider", "left"), GIR("pos_slider", "top"), GIR("pos_slider", "width"), GIR("pos_slider", "height"), BitOR($TBS_BOTH, $TBS_NOTICKS, $TBS_FIXEDLENGTH))
 	GUICtrlSetData(-1, 0)
 	GUICtrlSetOnEvent(-1, "ChangePos")
 	GUICtrlSetState(-1, $GUI_DISABLE)
@@ -1836,7 +1836,7 @@ Func logoff()
 		GUIDelete($MainGUI)
 		PluginTrigger("OnExit")
 		WebAnnounce("Offline")
-		SaveSetting("infos","crash",0)
+		SaveSetting("infos", "crash", 0)
 		If $Restart Then Run("pplayer.exe")
 		Exit 0
 	EndIf
@@ -2234,7 +2234,7 @@ EndFunc   ;==>_LVInsertItem
 Func WM_NOTIFY($hWnd, $msgID, $wParam, $lParam)
 	Local $LocalNMHDR = DllStructCreate("int;int;int", $lParam)
 	If @error Then Return $GUI_RUNDEFMSG
-	If $wParam <> BitAND($WParam, 0xFFFF) Then debug($wParam & " " & BitAND($WParam, 0xFFFF))
+	If $wParam <> BitAND($wParam, 0xFFFF) Then debug($wParam & " " & BitAND($wParam, 0xFFFF))
 	Switch $wParam
 		Case $Searchview
 			If $SearchWait And DllStructGetData($LocalNMHDR, 3) = -3 Then SetList(__GUICtrlListView_GetItemText($Searchview, _GUICtrlListView_GetNextItem($Searchview), 5))
