@@ -44,7 +44,30 @@ If _Singleton("pplayermutex", 1) == 0 Then
 EndIf
 
 If LoadSetting("infos","crash",0) == 1 Then
-	Info("It seems that PPlayer crashed")
+	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 190,255, 202)
+	$Label1 = GUICtrlCreateLabel("PPlayer crashed... If this happened more than one time now you might consider downloading the latest version to make sure its a new bug." & @CRLF & "If you already download the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer.", 8, 8, 396, 145)
+	$Button1 = GUICtrlCreateButton("Download Installer", 8, 160, 113, 25, 0)
+	$Button2 = GUICtrlCreateButton("Submit bugs", 296, 160, 113, 25, 0)
+	$Button3 = GUICtrlCreateButton("Continue", 208, 160, 81, 25, 0)
+	$Button4 = GUICtrlCreateButton("Exit PPlayer", 128, 160, 73, 25, 0)
+	GUISetState(@SW_SHOW)
+	While 1
+		$nMsg = GUIGetMsg()
+		Switch $nMsg
+			Case -3
+				ExitLoop
+			Case $Button2
+				ShellExecute("https://sourceforge.net/tracker/?group_id=206085&atid=996243")
+			Case $Button1
+				ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
+			Case $Button3
+				ExitLoop
+			Case $Button4
+				Exit 0
+		EndSwitch
+	WEnd
+	GUIDelete($Form2)
+	SaveSetting("infos","crash",1)
 Else
 	SaveSetting("infos","crash",1)
 EndIf
@@ -81,6 +104,11 @@ FileChangeDir($PP_Dir)
 #include"include\default\GuiComboBox.au3"
 #endregion
 
+Opt("GUIOnEventMode", 1)
+Opt("TrayAutoPause", 0)
+Opt("TrayOnEventMode", 1)
+Opt("TrayMenuMode", 1)
+
 Global $PP_HP = "http://pplayer.sourceforge.net/access/"
 
 Folders()
@@ -103,11 +131,6 @@ If IniRead("db\settings.ini", "settings", "skin", "") == "" Then
 	IniWrite("db\settings.ini", "settings", "TextColor", StringTrimLeft(IniRead($Skin_Folder & "\Skin.dat", "color", "fontcolor", ""), 2))
 	IniWrite("db\settings.ini", "settings", "skin", GetOpt("skin"))
 EndIf
-
-Opt("GUIOnEventMode", 1)
-Opt("TrayAutoPause", 0)
-Opt("TrayOnEventMode", 1)
-Opt("TrayMenuMode", 1)
 
 #endregion
 
