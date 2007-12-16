@@ -12,12 +12,24 @@ Func Stream_CreateCustomGUI()
 	StreamBuild()
 EndFunc
 
+Func Stream_OnExit()
+	If IniRead("db\settings.ini", "GUIStati", "Stream", "Close") == "Open" Then
+		$Pos = WinGetPos("PPlayer - Stream")
+		If Not @error Then
+			_IniWrite("db\settings.ini", "window", "Streamx", $Pos[0])
+			_IniWrite("db\settings.ini", "window", "Streamy", $Pos[1])
+		EndIf
+	EndIf
+	GUIDelete($StreamGUI)
+EndFunc
+
 Func Stream_SongIsStream($id,$filepath)
 	Stream_Play($id,$filepath)
 	$SongCapturedbyPlugin = True
 EndFunc
 
 Func Stream_Play($id, $Filepath)
+	$URL = $Filepath
 	$playing = True
 	$LeaveWhile = False
 	$Type = StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1))
@@ -83,6 +95,11 @@ Func Stream_Play($id, $Filepath)
 		UpdateLabelInfo($tag, $similar)
 		PluginTrigger("SongInformationLoaded",$id,$tag)
 		WebAnnounce($tag)
+		IniWrite("db\Streams.ini",$URL,"Adress",$Filepath)
+		IniWrite("db\Streams.ini",$URL,"Name",$tag[3])
+		$Sel = _GUICtrlListView_FindInText($StreamListView,$URL)
+		_GUICtrlListView_SetItemText($StreamListView,$Sel,$Filepath,2)
+		_GUICtrlListView_SetItemText($StreamListView,$Sel,$tag[3])
 	EndIf
 	UpdateLabelAction(WMGetState ())
 	While $playing And Not $LeaveWhile
@@ -93,16 +110,34 @@ Func Stream_Play($id, $Filepath)
 EndFunc   ;==>PlayStream
 
 Func StreamBuild()
-	Global $StreamGUI = XSkinGUICreate("PPlayer - Stream", 300+$factorX*2, 100+$factorY*2,$Skin_Folder,1,25, IniRead("db\settings.ini", "window", "Streamx", -1), IniRead("db\settings.ini", "window", "Streamy", -1), -1, $MainGUI)
-	GUISetBkColor("0x" & GetOpt("BkColor"))
+	Global $Streams[IniRead("db\settings.ini", "Stream", 0, 0)+1]
+	Global $StreamGUI = XSkinGUICreate("PPlayer - Stream", 532+$factorX*2, 323+$factorY*2, $Skin_Folder,1,25, IniRead("db\settings.ini", "window", "Streamx", -1), IniRead("db\settings.ini", "window", "Streamy", -1), -1, $MainGUI)
 	XSkinIcon($StreamGUI,3,StringSplit("StreamClose|StreamClose|StreamHelp","|"))
-	GUICtrlCreateButton("Play", 10+$factorX, 50+$factorY, 100, 50, 0)
+	Global $StreamListView = GUICtrlCreateListView("Name      |Adress                                                   |IP          ", 0+$factorX, 0+$factorY, 481, 321)
+	GUICtrlCreateIcon($PP_IcoFolder, 1,486+$factorX, 8+$factorY, 32, 32)
+	GUICtrlSetOnEvent(-1,"StreamAdd")
+	GUICtrlCreateIcon($PP_IcoFolder, 9, 486+$factorX, 49+$factorY, 32, 32)
+	GUICtrlSetOnEvent(-1,"StreamDel")
+	GUICtrlCreateButton("Queue", 486+$factorX, 95+$factorY, 40, 32)
+	GUICtrlSetOnEvent(-1,"StreamQueue")
+	GUICtrlCreateButton("Play", 486+$factorX, 136+$factorY, 40, 32)
+	GUICtrlSetOnEvent(-1,"StreamPlay")
+	
+	$CM = GUICtrlCreateContextMenu($StreamListView)
+	GUICtrlCreateMenuItem("Add", $CM)
 	GUICtrlSetOnEvent(-1, "StreamAdd")
-	Global $StreamURL = GUICtrlCreateCombo("", 10+$factorX,20+$factorY, 280, 20)
-	For $i = 1 To IniRead("db\settings.ini", "Stream", 0, 0)
-		If StringLen(IniRead("db\settings.ini", "Stream", $i, "")) > 0 Then _GUICtrlComboBox_AddString($StreamURL, IniRead("db\settings.ini", "Stream", $i, ""))
-	Next
+	GUICtrlCreateMenuItem("Delete", $CM)
+	GUICtrlSetOnEvent(-1, "Streamdel")
+	GUICtrlCreateMenuItem("Play", $CM)
+	GUICtrlSetOnEvent(-1, "StreamPlay")
+	GUICtrlCreateMenuItem("Queue", $CM)
+	GUICtrlSetOnEvent(-1, "StreamQueue")
 	If IniRead("db\settings.ini", "GUIStati", "Stream", "Close") == "Open" Then Stream()
+	$Secs = IniReadSectionNames("db\Streams.ini")
+	If @Error Then Return ""
+	For $i = 1 To $Secs[0]
+		$Streams[$i] = GUICtrlCreateListViewItem(IniRead("db\Streams.ini", $Secs[$i],"Name", "Unknown") & "|" & IniRead("db\Streams.ini", $Secs[$i], "URL", "") & "|" & IniRead("db\Streams.ini", $Secs[$i],"Adress", IniRead("db\Streams.ini", $Secs[$i], "URL", "")),$StreamListView)
+	Next
 EndFunc   ;==>StreamBuild
 
 Func Stream()
@@ -121,21 +156,43 @@ Func StreamHelp()
 EndFunc
 
 Func StreamAdd()
-	$Sel = GUICtrlRead($StreamURL)
-	If StringInStr(_GUICtrlComboBox_GetList($StreamURL), $Sel) == 0 Then
-		$pods = IniRead("db\settings.ini", "Stream", 0, 0) + 1
-		_IniWrite("db\settings.ini", "Stream", 0, $pods)
-		_IniWrite("db\settings.ini", "Stream", $pods, $Sel)
-		_GUICtrlComboBox_AddString($StreamURL, $Sel)
+	$Sel = InputBox("PPlayer - Stream","Please enter the adress of the stream you want to add")
+	If @Error Or StringLen($Sel) == 0 Then Return ""
+	If _GUICtrlListView_FindInText($StreamListView,$Sel) == -1 Then
+		_IniWrite("db\Streams.ini", $Sel,"URL",$Sel)
+		ReDim $Streams[Ubound($Streams)+1]
+		$Streams[UBound($Streams)-1] = GUICtrlCreateListViewItem(IniRead("db\Streams.ini", $Sel,"Name", "Unknown") & "|" & IniRead("db\Streams.ini", $Sel, "URL", $Sel) & "|" & IniRead("db\Streams.ini", $Sel,"Adress", IniRead("db\Streams.ini", $Sel, "URL", $sel)),$StreamListView)
+	Else
+		Error("This stream is already in list")
 	EndIf
-	SetList($Sel)
 EndFunc   ;==>StreamPlay
 
-Func _IsNumber($String)
-	$Ret = True
-	$Len = StringLen($String)
-	For $i = 1 To $Len
-		If Not StringMid($String,$i,1) == 0 And Not StringMid($String,$i,1) == 1 And Not StringMid($String,$i,1) == 2 And Not StringMid($String,$i,1) == 3 And Not StringMid($String,$i,1) == 4 And Not StringMid($String,$i,1) == 5 And Not StringMid($String,$i,1) == 6 And Not StringMid($String,$i,1) == 7 And Not StringMid($String,$i,1) == 8 And Not StringMid($String,$i,1) == 9 Then $Ret = False
-	Next
-	Return $Ret
+Func StreamDel()
+	$ItemSel = _GUICtrlListView_GetSelectedIndices($StreamListView, True)
+	If $ItemSel[0] > 0 Then
+		For $i = 1 To $ItemSel[0]
+			IniDelete("db\Streams.ini",_GUICtrlListView_GetItemText($StreamListView,$ItemSel[$i],1))
+			GUICtrlDelete($Streams[$ItemSel[$i]+1])
+		Next
+	EndIf
+EndFunc   ;==>StreamPlay
+
+Func StreamPlay()
+	$ItemSel = _GUICtrlListView_GetSelectedIndices($StreamListView, True)
+	If $ItemSel[0] > 0 Then
+		For $i = 1 To $ItemSel[0]
+			SetList(_GUICtrlListView_GetItemText($StreamListView,$ItemSel[$i],2))
+		Next
+		Focus(_GUICtrlListView_GetItemCount($lieder)-1)
+		Play_active()
+	EndIf
+EndFunc
+
+Func StreamQueue()
+	$ItemSel = _GUICtrlListView_GetSelectedIndices($StreamListView, True)
+	If $ItemSel[0] > 0 Then
+		For $i = 1 To $ItemSel[0]
+			SetList(_GUICtrlListView_GetItemText($StreamListView,$ItemSel[$i],2))
+		Next
+	EndIf
 EndFunc
