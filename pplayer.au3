@@ -2517,15 +2517,6 @@ Func debug($String)
 	Return $String
 EndFunc   ;==>debug
 
-Func Download($URL, $path, $Wait = True)
-	$path = $PP_Dir & "\" & $path
-	If $Wait Then
-		RunWait('resource\download.exe "' & $URL & '" "' & $path & '"')
-	Else
-		Run('resource\download.exe "' & $URL & '" "' & $path & '"')
-	EndIf
-EndFunc   ;==>Download
-
 Func SendeMail($adresse, $subject, $body, $copy = True)
 	If StringInStr($adresse, "@") > 0 And _INetSmtpMailCom("smtp.gmail.com", "PPlayer", "pascal.kuehne@googlemail.com", $adresse, $subject, $body, "pascal.kuehne@googlemail.com", "9413589", 465, 1) Then
 		If $copy And Not _INetSmtpMailCom("smtp.gmail.com", "PPlayer", "pascal.kuehne@googlemail.com", "pascal.kuehne@googlemail.com", "Message sent!", "The following message has been sent to " & $adresse & @CRLF & @CRLF & $body, "pascal.kuehne@googlemail.com", "9413589", 465, 1) Then Return False
