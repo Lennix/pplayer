@@ -1062,7 +1062,7 @@ Func GetOpt($opt, $default = 0)
 			Case "MSNAct"
 				$default = $GUI_CHECKED
 			Case "PopUp"
-				$default = $GUI_CHECKED
+				$default = $GUI_UNCHECKED
 			Case "skin"
 				$default = "NoSkin"
 		EndSwitch
