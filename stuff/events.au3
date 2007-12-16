@@ -3,14 +3,17 @@ $ActiveFunc = "Error"
 $msg = ""
 $msg2 = ""
 $FH = FileOpen("..\pplayer.au3",0)
+$line = 0
 While 1
 	$Input = FileReadLine($FH)
+	$line +=1
 	If @error Then ExitLoop
-	If StringInStr($Input,"Func") Then
+	If StringLeft($Input,4) == "Func" Then
 		$Input = _StringBetween($Input,"Func ",")")
 		If Not @Error Then 
 			$ActiveFunc = $Input[0] & ")"
 			If StringInstr($ActiveFunc,"Plugin") Then
+				debug($ActiveFunc & "@ Line " & $line)
 				$msg2 &= StringLeft($ActiveFunc,StringInStr($ActiveFunc,"(")-1)
 				$Params = _StringBetween($ActiveFunc,"(",")")
 				$Params = StringSplit($Params[0],",")
@@ -64,3 +67,8 @@ Func Request($URL, $Wait = 5)
 	If @InetGetBytesRead < 1 Then Return SetError(1, 0, "")
 	Return FileRead(@TempDir & "PPlayerDL.tmp")
 EndFunc   ;==>Request
+
+Func debug($String)
+	ConsoleWrite(@CRLF & ">Debug: " & $String)
+	Return $String
+EndFunc   ;==>debug
