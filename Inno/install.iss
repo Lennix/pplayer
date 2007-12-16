@@ -50,6 +50,7 @@ Name: "associate"; Description: "&Associate MP3/WMA/OGG with PPlayer"; GroupDesc
 [Files]
 Source: "..\pplayer.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\*.au3"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\GNU-GPL.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\resource\*"; DestDir: "{app}\resource"; Flags: ignoreversion
 Source: "..\include\*"; DestDir: "{app}\include"; Flags: ignoreversion recursesubdirs
 Source: "..\..\def\*"; DestDir: "{app}\Skins"; Flags: ignoreversion recursesubdirs
