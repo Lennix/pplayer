@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="PPlayer">
 	<properties>
-		<property name="Left" vt="Int16">257</property>
-		<property name="Top" vt="Int16">153</property>
+		<property name="Left" vt="Int16">208</property>
+		<property name="Top" vt="Int16">154</property>
 		<property name="Width" vt="Int16">593</property>
 		<property name="Height" vt="Int16">387</property>
 		<property name="Caption" vt="String">PPlayer</property>
@@ -18,6 +18,7 @@
 		<property name="ExStyle" vt="Int16">256</property>
 		<property name="Version" vt="String">1.03</property>
 		<property name="FormOptOnEvent" vt="True">True</property>
+		<property name="FormOptIndentCount" vt="Int8">0</property>
 		<property name="FormOptVarScope" vt="Int8">1</property>
 		<property name="PixelsPerInch" vt="Int8">96</property>
 		<property name="TextHeight" vt="Int8">13</property>
@@ -25,9 +26,9 @@
 	<components>
 		<object type="TAList" name="lieder">
 			<properties>
-				<property name="Left" vt="Int16">384</property>
+				<property name="Left" vt="Int16">368</property>
 				<property name="Top" vt="Int8">8</property>
-				<property name="Width" vt="Int16">193</property>
+				<property name="Width" vt="Int16">217</property>
 				<property name="Height" vt="Int16">253</property>
 				<property name="ItemHeight" vt="Int8">13</property>
 				<property name="TabOrder" vt="Int8">0</property>
@@ -57,7 +58,7 @@
 			<properties>
 				<property name="Left" vt="Int16">144</property>
 				<property name="Top" vt="Int8">8</property>
-				<property name="Width" vt="Int16">185</property>
+				<property name="Width" vt="Int16">193</property>
 				<property name="Height" vt="Int16">257</property>
 				<property name="AutoSize" vt="False">False</property>
 				<property name="Caption" vt="String">info_label</property>
@@ -71,8 +72,8 @@
 		</object>
 		<object type="TAButton" name="del">
 			<properties>
-				<property name="Left" vt="Int16">344</property>
-				<property name="Top" vt="Int16">200</property>
+				<property name="Left" vt="Int16">336</property>
+				<property name="Top" vt="Int8">40</property>
 				<property name="Width" vt="Int8">32</property>
 				<property name="Height" vt="Int8">32</property>
 				<property name="Caption" vt="String">Del</property>
@@ -85,8 +86,8 @@
 		</object>
 		<object type="TAButton" name="rate">
 			<properties>
-				<property name="Left" vt="Int16">344</property>
-				<property name="Top" vt="Int16">232</property>
+				<property name="Left" vt="Int16">336</property>
+				<property name="Top" vt="Int8">72</property>
 				<property name="Width" vt="Int8">32</property>
 				<property name="Height" vt="Int8">32</property>
 				<property name="Caption" vt="String">Rate</property>
@@ -242,8 +243,8 @@
 		</object>
 		<object type="TAButton" name="add">
 			<properties>
-				<property name="Left" vt="Int16">344</property>
-				<property name="Top" vt="Int16">168</property>
+				<property name="Left" vt="Int16">336</property>
+				<property name="Top" vt="Int8">8</property>
 				<property name="Width" vt="Int8">32</property>
 				<property name="Height" vt="Int8">32</property>
 				<property name="Caption" vt="String">Add</property>
