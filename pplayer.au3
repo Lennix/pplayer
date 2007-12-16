@@ -64,9 +64,9 @@ If LoadSetting("infos", "crash", 0) == 1 Then
 				debug(GUICtrlRead($Combo1))
 				Switch GUICtrlRead($Combo1)
 					Case "Submit BugReport"
-						ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
-					Case "Download Installer"
 						ShellExecute("https://sourceforge.net/tracker/?group_id=206085&atid=996243")
+					Case "Download Installer"
+						ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
 					Case "Reset Windowpositions"
 						IniDelete("db\settings.ini","window")
 				EndSwitch
@@ -399,6 +399,7 @@ Func Play_active()
 		UpdateList($activelistid, $tag[3], $tag[1])
 	EndIf
 	UpdateLabelInfo($tag, $similar)
+	PluginTrigger("SongInformationLoaded", $id, $tag)
 	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	If FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then ; Load Cover if not exists
 		GUICtrlSetImage($ShowAlbum, "covers\" & $tag[1] & "-" & $tag[2] & ".jpg")
@@ -679,52 +680,66 @@ Func SettingsBuild()
 	GUICtrlSetOnEvent(-1, "Settings_Change")
 	
 	$Files = _FileSearch($PP_Dir & "resource", "*icos.dll", 0, '', True)
-	GUICtrlCreateLabel("Iconset", 16, 184, 48, 17)
-	Global $SettingsCombo3 = GUICtrlCreateCombo("", 264, 184, 209, 25)
-	$Text = ""
-	For $i = 1 To $Files[0]
-		$String = StringTrimLeft($Files[$i], StringInStr($Files[$i], "\", 0, -1))
-		$Text &= StringTrimRight($String, 8) & "|"
-	Next
-	$Text = StringTrimRight($Text, 1)
-	GUICtrlSetData(-1, $Text)
-	GUICtrlSetOnEvent(-1, "Settings_Change")
-	$Text = StringSplit($Text, "|")
-	For $i = 1 To $Text[0]
-		If $Text[$i] == IniRead("db\settings.ini", "settings", "icos", "Metal") Then _GUICtrlComboBox_SetCurSel($SettingsCombo3, $i - 1)
-	Next
+	If @Error Then
+		Error("Your Installation misses icons." & @CRLF & "You have to reinstall PPlayer." & @CRLF "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
+	Else
+		GUICtrlCreateLabel("Iconset", 16, 184, 48, 17)
+		Global $SettingsCombo3 = GUICtrlCreateCombo("", 264, 184, 209, 25)
+		$Text = ""
+		For $i = 1 To $Files[0]
+			$String = StringTrimLeft($Files[$i], StringInStr($Files[$i], "\", 0, -1))
+			$Text &= StringTrimRight($String, 8) & "|"
+		Next
+		$Text = StringTrimRight($Text, 1)
+		GUICtrlSetData(-1, $Text)
+		GUICtrlSetOnEvent(-1, "Settings_Change")
+		$Text = StringSplit($Text, "|")
+		For $i = 1 To $Text[0]
+			If $Text[$i] == IniRead("db\settings.ini", "settings", "icos", "Metal") Then _GUICtrlComboBox_SetCurSel($SettingsCombo3, $i - 1)
+		Next
+	EndIf
 	
 	$Files = _FileSearch($PP_Dir & "resource", "*PPlayer.kxf", 0, '', True)
-	GUICtrlCreateLabel("Design for MainGUI", 16, 216, 150, 17)
-	Global $SettingsCombo4 = GUICtrlCreateCombo("", 264, 216, 209, 25)
-	$Text = ""
-	For $i = 1 To $Files[0]
-		$String = StringTrimLeft($Files[$i], StringInStr($Files[$i], "\", 0, -1))
-		$Text &= StringTrimRight($String, 11) & "|"
-	Next
-	$Text = StringTrimRight($Text, 1)
-	GUICtrlSetData(-1, $Text)
-	GUICtrlSetOnEvent(-1, "Settings_Change")
-	$Text = StringSplit($Text, "|")
-	For $i = 1 To $Text[0]
-		If $Text[$i] == IniRead("db\settings.ini", "settings", "PPlayerkxf", "Default") Then _GUICtrlComboBox_SetCurSel($SettingsCombo4, $i - 1)
-	Next
+	If @Error Then
+		Error("Your Installation misses positionfiles." & @CRLF & "You have to reinstall PPlayer." & @CRLF "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
+		logoff()
+	Else
+		GUICtrlCreateLabel("Design for MainGUI", 16, 216, 150, 17)
+		Global $SettingsCombo4 = GUICtrlCreateCombo("", 264, 216, 209, 25)
+		$Text = ""
+		For $i = 1 To $Files[0]
+			$String = StringTrimLeft($Files[$i], StringInStr($Files[$i], "\", 0, -1))
+			$Text &= StringTrimRight($String, 11) & "|"
+		Next
+		$Text = StringTrimRight($Text, 1)
+		GUICtrlSetData(-1, $Text)
+		GUICtrlSetOnEvent(-1, "Settings_Change")
+		$Text = StringSplit($Text, "|")
+		For $i = 1 To $Text[0]
+			If $Text[$i] == IniRead("db\settings.ini", "settings", "PPlayerkxf", "Default") Then _GUICtrlComboBox_SetCurSel($SettingsCombo4, $i - 1)
+		Next
+	EndIf
 	
 	$Files = _FileSearch($PP_Dir & "resource", "*PlayMode.kxf", 0, '', True)
-	GUICtrlCreateLabel("Design for PlayMode", 16, 248, 150, 17)
-	Global $SettingsCombo5 = GUICtrlCreateCombo("", 264, 248, 209, 25)
-	$Text = ""
-	For $i = 1 To $Files[0]
-		$String = StringTrimLeft($Files[$i], StringInStr($Files[$i], "\", 0, -1))
-		$Text &= StringTrimRight($String, 12) & "|"
-	Next
-	$Text = StringTrimRight($Text, 1)
-	GUICtrlSetData(-1, $Text)
-	GUICtrlSetOnEvent(-1, "Settings_Change")
-	$Text = StringSplit($Text, "|")
-	For $i = 1 To $Text[0]
-		If $Text[$i] == IniRead("db\settings.ini", "settings", "PlayModekxf", "Default") Then _GUICtrlComboBox_SetCurSel($SettingsCombo5, $i - 1)
-	Next
+	If @Error Then
+		Error("Your Installation misses positionfiles." & @CRLF & "You have to reinstall PPlayer." & @CRLF "Do you want to get redirected to the download?",4) == 6 Then DownloadPPlayer()
+		logoff()
+	Else
+		GUICtrlCreateLabel("Design for PlayMode", 16, 248, 150, 17)
+		Global $SettingsCombo5 = GUICtrlCreateCombo("", 264, 248, 209, 25)
+		$Text = ""
+		For $i = 1 To $Files[0]
+			$String = StringTrimLeft($Files[$i], StringInStr($Files[$i], "\", 0, -1))
+			$Text &= StringTrimRight($String, 12) & "|"
+		Next
+		$Text = StringTrimRight($Text, 1)
+		GUICtrlSetData(-1, $Text)
+		GUICtrlSetOnEvent(-1, "Settings_Change")
+		$Text = StringSplit($Text, "|")
+		For $i = 1 To $Text[0]
+			If $Text[$i] == IniRead("db\settings.ini", "settings", "PlayModekxf", "Default") Then _GUICtrlComboBox_SetCurSel($SettingsCombo5, $i - 1)
+		Next
+	EndIf
 	
 	GUICtrlCreateLabel("Statusbar", 16, 280, 86, 17)
 	Global $SettingsCheckbox4 = GUICtrlCreateCheckbox("", 264, 280, 209, 25)
@@ -1380,6 +1395,7 @@ Func Hide()
 		TrayTip("Versteckt", "Your Player is now in Tray" & @CRLF & "Click on it and it will reopen", 10, 1)
 		_IniWrite("db\settings.ini", "infos", "hide", 1)
 	EndIf
+	PluginTrigger("OnPPlayerMinimized")
 EndFunc   ;==>Hide
 
 Func Show()
@@ -1392,6 +1408,7 @@ Func Show()
 		GUISetState(@SW_SHOW, $MainGUI)
 		GUISetState(@SW_RESTORE, $MainGUI)
 	EndIf
+	PluginTrigger("OnPPlayerMaximized")
 EndFunc   ;==>Show
 
 Func Tray_info()
@@ -2521,6 +2538,10 @@ EndFunc   ;==>Info
 Func Help()
 	ShellExecute("http://pplayer.wiki.sourceforge.net/")
 EndFunc   ;==>Help
+
+Func DownloadPPlayer()
+	ShellExecute("https://sourceforge.net/project/showfiles.php?group_id=206085")
+EndFunc
 
 Func debug($String)
 	ConsoleWrite(@CRLF & ">Debug: " & $String)
