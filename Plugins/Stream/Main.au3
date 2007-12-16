@@ -102,7 +102,7 @@ Func Stream_Play($id, $Filepath)
 		_GUICtrlListView_SetItemText($StreamListView,$Sel,$tag[3])
 	EndIf
 	UpdateLabelAction(WMGetState ())
-	While $playing And Not $LeaveWhile
+	While $playing And Not $LeaveWhile And WMGetState() == "Playing"
 		Sleep(100)
 	WEnd
 	WMStop()
