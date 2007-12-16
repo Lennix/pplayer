@@ -419,10 +419,12 @@ Func Pause()
 		Case "Playing"
 			TrayItemSetText($Tray_Pause, "Resume")
 			WMPause()
+			PluginTrigger("SongPlayPaused")
 			GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
 		Case "Paused"
 			TrayItemSetText($Tray_Pause, "Pause")
 			GUICtrlSetImage($pause_button, $PP_IcoFolder, 6)
+			PluginTrigger("SongPlayResumed")
 			WMResume()
 		Case Else
 			Play_active()
