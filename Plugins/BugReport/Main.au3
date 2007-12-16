@@ -10,8 +10,8 @@ Func BugReport_OnExit()
 	If IniRead("db\settings.ini", "GUIStati", "BugReport", "Close") == "Open" Then
 		$Pos = WinGetPos("PPlayer - BugReport")
 		If Not @error Then
-			_IniWrite("db\settings.ini", "window", "podx", $Pos[0])
-			_IniWrite("db\settings.ini", "window", "pody", $Pos[1])
+			_IniWrite("db\settings.ini", "window", "brx", $Pos[0])
+			_IniWrite("db\settings.ini", "window", "bry", $Pos[1])
 		EndIf
 	EndIf
 	GUIDelete($BugReportGUI)
@@ -23,7 +23,7 @@ Func BugReport_OnPluginsRegistered()
 EndFunc
 
 Func BugReport_CreateCustomGUI()
-	Global $BugReportGUI = XSkinGUICreate("PPlayer - Bugreport", 633+$FactorX*2, 447+$FactorY*2,$Skin_Folder)
+	Global $BugReportGUI = XSkinGUICreate("PPlayer - Bugreport", 633+$FactorX*2, 447+$FactorY*2,$Skin_Folder,1,25, IniRead("db\settings.ini", "window", "Streamx", -1), IniRead("db\settings.ini", "window", "Streamy", -1), -1, $MainGUI)
 	XSkinIcon($BugReportGUI,3,StringSplit("BugReportclose|BugReportclose|BugReportHelp","|"))
 	GUICtrlCreateGroup("Report", 0+$FactorX, 0+$FactorY, 185, 49)
 	Global $BugReportRadio[3]
