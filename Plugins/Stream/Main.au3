@@ -2,7 +2,8 @@ PluginRegister("Stream")
 
 Func Stream_OnPluginLoad()
 	PluginRegisterMenu("Stream","Stream")
-	$StreamPlaying = 0
+	Global $StreamPlaying = False
+	Global $StreamChecked = False
 EndFunc
 
 Func Stream_OnPluginsRegistered()
@@ -32,32 +33,38 @@ EndFunc
 
 Func Stream_Play($id, $Filepath)
 	$URL = $Filepath
-	$playing = True
-	$LeaveWhile = False
 	$Type = StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1))
-	If StringInStr("pls|asx|php",$Type) > 0 Then
-		$Found = False
-		$Input = StringSplit(Request($Filepath),@CRLF)
-		For $i = 1 To $Input[0]
-			If StringInStr($Input[$i],"http") Then
-				$Filepath = debug(StringTrimLeft($Input[$i],StringInStr($Input[$i],"http")-1))
-				$Found = True
-				ExitLoop
+	Do
+		sleep(100)
+	Until $StreamChecked
+	If Not $StreamChecked Then
+		If StringInStr("pls|asx|php",$Type) > 0 Then
+			$Found = False
+			$Input = StringSplit(Request($Filepath),@CRLF)
+			For $i = 1 To $Input[0]
+				If StringInStr($Input[$i],"http") Then
+					$Filepath = debug(StringTrimLeft($Input[$i],StringInStr($Input[$i],"http")-1))
+					$Found = True
+					ExitLoop
+				EndIf
+			Next
+			If Not $Found Then
+				Error("Error loading stream")
+				;$LeaveWhile = True
+				Return ""
 			EndIf
-		Next
-		If Not $Found Then
-			Error("Error loading stream")
-			;$LeaveWhile = True
-			Return ""
+		EndIf
+		If $next_sound <> 0 Then
+			$active_sound = $next_sound
+		Else
+			Stop()
+			$active_sound = Play($Filepath)
 		EndIf
 	EndIf
-	If $next_sound <> 0 Then
-		$active_sound = $next_sound
-	Else
-		Stop()
-		$active_sound = Play($Filepath)
-	EndIf
+	$StreamChecked = False
 	$StreamPlaying = True
+	$playing = True
+	$LeaveWhile = False
 	PluginTrigger("SongPlayStarted",$id,$filepath)
 	$next_sound = 0
 	If WMGetState() == "Paused" Then Pause()
@@ -92,7 +99,7 @@ Func Stream_Play($id, $Filepath)
 		_GUICtrlListView_SetItemText($StreamListView,$Sel,$Status[0])
 	EndIf
 	UpdateLabelAction(WMGetState ())
-	While $playing And Not $LeaveWhile And WMGetState() == "Playing"
+	While $playing And Not $LeaveWhile And Not ( WMGetState() == "Stopped" )
 		Sleep(100)
 	WEnd
 	WMStop()
@@ -101,36 +108,39 @@ Func Stream_Play($id, $Filepath)
 EndFunc   ;==>PlayStream
 
 Func Stream_Event_MediaChange($Item)
-	Dim $tag[9]
-	$tag[3] = WMGetTitle($pObj.currentMedia)
-	$tag[1] = WMGetArtist($pObj.currentMedia)
-	$tag[2] = WMGetAlbum($pObj.currentMedia)
-	$tag[4] = WMGetGenre($pObj.currentMedia)
-	$tag[5] = "Stream"
-	$tag[6] = $liste[$activelistid]
-	$tag[7] = 0
-	$tag[8] = 10
-	For $i = 1 To 8
-		If StringLen($tag[$i]) == 0 Then $tag[$i] = "Stream"
-	Next
-	UpdateList($activelistid, $tag[3], "")
-	Dim $similar[1]
-	$similar[0] = 0
-	UpdateLabelInfo($tag, $similar)
-	PluginTrigger("SongInformationLoaded",$activelistid,$tag)
-	WebAnnounce($tag)
+	If $StreamPlaying Then
+		Dim $tag[9]
+		$tag[3] = WMGetTitle($pObj.currentMedia)
+		$tag[1] = WMGetArtist($pObj.currentMedia)
+		$tag[2] = WMGetAlbum($pObj.currentMedia)
+		$tag[4] = WMGetGenre($pObj.currentMedia)
+		$tag[5] = "Stream @ " & Round(($pObj.network.bitRate)/1000) & " kBit/s"
+		$tag[6] = $liste[$activelistid]
+		$tag[7] = 0
+		$tag[8] = 10
+		For $i = 1 To 8
+			If StringLen($tag[$i]) == 0 Then $tag[$i] = "Stream"
+		Next
+		UpdateList($activelistid, $tag[3], "")
+		Dim $similar[1]
+		$similar[0] = 0
+		UpdateLabelInfo($tag, $similar)
+		PluginTrigger("SongInformationLoaded",$activelistid,$tag)
+		WebAnnounce($tag)
+	EndIf
 EndFunc
 
 Func Stream_Event_Buffering($State)
 	debug("Buffering on " & $pobj.network.bufferingProgress)
 	debug("Download on " & $Pobj.network.downloadProgress)
+	If $pobj.network.bufferingProgress == 100 Then $StreamChecked = True
 EndFunc
 
 Func StreamBuild()
 	Global $Streams[IniRead("db\settings.ini", "Stream", 0, 0)+1]
 	Global $StreamGUI = XSkinGUICreate("PPlayer - Stream", 532+$factorX*2, 323+$factorY*2, $Skin_Folder,1,25, IniRead("db\settings.ini", "window", "Streamx", -1), IniRead("db\settings.ini", "window", "Streamy", -1), -1, $MainGUI)
 	XSkinIcon($StreamGUI,3,StringSplit("StreamClose|StreamClose|StreamHelp","|"))
-	Global $StreamListView = GUICtrlCreateListView("Name      |Adress                                                   |IP          ", 0+$factorX, 0+$factorY, 481, 321)
+	Global $StreamListView = GUICtrlCreateListView("Name                                   |Adress                                                              |IP          ", 0+$factorX, 0+$factorY, 481, 321)
 	GUICtrlCreateIcon($PP_IcoFolder, 1,486+$factorX, 8+$factorY, 32, 32)
 	GUICtrlSetOnEvent(-1,"StreamAdd")
 	GUICtrlCreateIcon($PP_IcoFolder, 9, 486+$factorX, 49+$factorY, 32, 32)
