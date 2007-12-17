@@ -32,6 +32,10 @@ Func MiniPPlayer_SongInformationLoaded($id, $songinfo)
 	GUICtrlSetData($MiniPPlayerLabel2, $songinfo[1])
 EndFunc   ;==>MiniPPlayer_SongInformationLoaded
 
+Func MiniPPlayer_OnPluginsRegistered()
+	If PluginExists("Updater") Then Updater_Register("http://pplayer.sourceforge.net/access/downloads/Plugins/MiniPPlayer/Main.au3","Plugins\MiniPPlayer\Main.au3")
+EndFunc
+
 Func MiniPPlayerIconClicked()
 	If WMGetState() == "Paused"  Then
 		GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 7)
