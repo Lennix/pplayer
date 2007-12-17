@@ -33,6 +33,7 @@ EndFunc
 
 Func Stream_Play($id, $Filepath)
 	$URL = $Filepath
+	$StreamPlaying = True
 	$Type = StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1))
 	Do
 		sleep(100)
@@ -62,7 +63,6 @@ Func Stream_Play($id, $Filepath)
 		EndIf
 	EndIf
 	$StreamChecked = False
-	$StreamPlaying = True
 	$playing = True
 	$LeaveWhile = False
 	PluginTrigger("SongPlayStarted",$id,$filepath)
@@ -116,16 +116,17 @@ Func Stream_Event_MediaChange($Item)
 		$tag[4] = WMGetGenre($pObj.currentMedia)
 		$tag[5] = "Stream @ " & Round(($pObj.network.bitRate)/1000) & " kBit/s"
 		$tag[6] = $liste[$activelistid]
-		$tag[7] = 0
+		$tag[7] = -1
 		$tag[8] = 10
 		For $i = 1 To 8
-			If StringLen($tag[$i]) == 0 Then $tag[$i] = "Stream"
+			If $tag[$i] == 0 Or StringLen($tag[$i]) == 0 Then $tag[$i] = "Stream"
 		Next
 		UpdateList($activelistid, $tag[3], "")
 		Dim $similar[1]
 		$similar[0] = 0
 		UpdateLabelInfo($tag, $similar)
 		PluginTrigger("SongInformationLoaded",$activelistid,$tag)
+		If $pobj.network.bufferingProgress == 100 Then $StreamChecked = True
 		WebAnnounce($tag)
 	EndIf
 EndFunc
@@ -137,7 +138,6 @@ Func Stream_Event_Buffering($State)
 EndFunc
 
 Func StreamBuild()
-	Global $Streams[IniRead("db\settings.ini", "Stream", 0, 0)+1]
 	Global $StreamGUI = XSkinGUICreate("PPlayer - Stream", 532+$factorX*2, 323+$factorY*2, $Skin_Folder,1,25, IniRead("db\settings.ini", "window", "Streamx", -1), IniRead("db\settings.ini", "window", "Streamy", -1), -1, $MainGUI)
 	XSkinIcon($StreamGUI,3,StringSplit("StreamClose|StreamClose|StreamHelp","|"))
 	Global $StreamListView = GUICtrlCreateListView("Name                                   |Adress                                                              |IP          ", 0+$factorX, 0+$factorY, 481, 321)
@@ -162,6 +162,7 @@ Func StreamBuild()
 	If IniRead("db\settings.ini", "GUIStati", "Stream", "Close") == "Open" Then Stream()
 	$Secs = IniReadSectionNames("db\Streams.ini")
 	If @Error Then Return ""
+	Global $Streams[$Secs[0]+1]
 	For $i = 1 To $Secs[0]
 		$Streams[$i] = GUICtrlCreateListViewItem(IniRead("db\Streams.ini", $Secs[$i],"Name", "Unknown") & "|" & IniRead("db\Streams.ini", $Secs[$i], "URL", "") & "|" & IniRead("db\Streams.ini", $Secs[$i],"Adress", IniRead("db\Streams.ini", $Secs[$i], "URL", "")),$StreamListView)
 	Next
