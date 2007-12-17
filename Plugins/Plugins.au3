@@ -4,4 +4,3 @@
 #include "Podcast\Main.au3"
 #include "Stream\Main.au3"
 #include "Updater\Main.au3"
-#include "MiniPPlayer\Main.au3"
