@@ -12,7 +12,7 @@ Func ChangeMSN_SongInformationLoaded($id,$tag)
 	If LoadSetting("ChangeMSN","MSNAct",$GUI_CHECKED) == $GUI_CHECKED Then ChangeMSNMessage("Music", 1, StringReplace(StringReplace(StringReplace(StringReplace(LoadSetting("ChangeMSN","MSN","%t - %a - %i (PPlayer)"), "%g", $tag[4]), "%t", $tag[3]), "%i", $tag[1]), "%a", $tag[2]))
 EndFunc
 
-Func ChangeMSN_NextSongNotAvailable($id,$tag)
+Func ChangeMSN_NextSongNotAvailable()
 	ChangeMSNMessage("Music", 0, "")
 EndFunc
 
