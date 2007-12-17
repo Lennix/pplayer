@@ -1675,6 +1675,7 @@ Func Startup()
 	EndIf
 	WMStartPlayer()
 	$pObj.settings.enableErrorDialogs = False
+	ObjEvent($pObj,"TestEvent")
 	StartGUI()
 	PluginTrigger("MainGUICreated")
 	BuildGUIs()
@@ -1698,6 +1699,19 @@ Func Startup()
 	ErrorWrite("Startup took " & Round(TimerDiff($Begin) / 1000, 4) & " sec")
 	PluginTrigger("OnPPlayerLoaded")
 EndFunc   ;==>Startup
+
+Func TestEvent($Event)
+	debug("Event called: " & $Event)
+	If $Event == "Buffering" Then
+		debug($pobj.network.bufferingProgress)
+	ElseIf $Event == "MediaChange" Then
+		debug($pObj.currentMedia.name)
+		debug(WMGETArtist($pObj.currentMedia))
+		debug(WMGetAlbum($pObj.currentMedia))
+		debug(WMGetGenre($pObj.currentMedia))
+		debug(WMGetTitle($pObj.currentMedia))
+	EndIf
+EndFunc
 
 Func StartTray()
 	TraySetOnEvent(-13, "Show")
