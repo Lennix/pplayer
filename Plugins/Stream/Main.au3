@@ -2,6 +2,7 @@ PluginRegister("Stream")
 
 Func Stream_OnPluginLoad()
 	PluginRegisterMenu("Stream","Stream")
+	$StreamPlaying = 0
 EndFunc
 
 Func Stream_OnPluginsRegistered()
@@ -10,6 +11,7 @@ EndFunc
 	
 Func Stream_CreateCustomGUI()
 	StreamBuild()
+	ObjEvent($pobj,"Stream_Event_")
 EndFunc
 
 Func Stream_OnExit()
@@ -55,6 +57,7 @@ Func Stream_Play($id, $Filepath)
 		Stop()
 		$active_sound = Play($Filepath)
 	EndIf
+	$StreamPlaying = True
 	PluginTrigger("SongPlayStarted",$id,$filepath)
 	$next_sound = 0
 	If WMGetState() == "Paused" Then Pause()
@@ -78,29 +81,15 @@ Func Stream_Play($id, $Filepath)
 		UpdateLabelAction(WMGetState ())
 		Sleep(100)
 	WEnd
-	Dim $tag[9]
+	
 	$Status = _StringBetween(debug($pObj.status), '"', '"')
 	If Not @error Then
-		$tag[3] = $Status[0]
-		$tag[1] = "Stream"
-		$tag[2] = "Stream"
-		$tag[4] = "Stream"
-		$tag[5] = "Stream"
-		$tag[6] = $Filepath
-		$tag[7] = 0
-		$tag[8] = 10
-		UpdateList($id, $tag[3], "")
-		Dim $similar[1]
-		$similar[0] = 0
-		UpdateLabelInfo($tag, $similar)
-		PluginTrigger("SongInformationLoaded",$id,$tag)
-		WebAnnounce($tag)
 		IniWrite("db\Stream.ini",$URL,"URL",$URL)
 		IniWrite("db\Streams.ini",$URL,"Adress",$Filepath)
-		IniWrite("db\Streams.ini",$URL,"Name",$tag[3])
+		IniWrite("db\Streams.ini",$URL,"Name",$Status[0])
 		$Sel = _GUICtrlListView_FindInText($StreamListView,$URL)
 		_GUICtrlListView_SetItemText($StreamListView,$Sel,$Filepath,2)
-		_GUICtrlListView_SetItemText($StreamListView,$Sel,$tag[3])
+		_GUICtrlListView_SetItemText($StreamListView,$Sel,$Status[0])
 	EndIf
 	UpdateLabelAction(WMGetState ())
 	While $playing And Not $LeaveWhile And WMGetState() == "Playing"
@@ -108,7 +97,34 @@ Func Stream_Play($id, $Filepath)
 	WEnd
 	WMStop()
 	UnFocus($id)
+	$StreamPlaying = False
 EndFunc   ;==>PlayStream
+
+Func Stream_Event_MediaChange($Item)
+	Dim $tag[9]
+	$tag[3] = WMGetTitle($pObj.currentMedia)
+	$tag[1] = WMGetArtist($pObj.currentMedia)
+	$tag[2] = WMGetAlbum($pObj.currentMedia)
+	$tag[4] = WMGetGenre($pObj.currentMedia)
+	$tag[5] = "Stream"
+	$tag[6] = $liste[$activelistid]
+	$tag[7] = 0
+	$tag[8] = 10
+	For $i = 1 To 8
+		If StringLen($tag[$i]) == 0 Then $tag[$i] = "Stream"
+	Next
+	UpdateList($activelistid, $tag[3], "")
+	Dim $similar[1]
+	$similar[0] = 0
+	UpdateLabelInfo($tag, $similar)
+	PluginTrigger("SongInformationLoaded",$activelistid,$tag)
+	WebAnnounce($tag)
+EndFunc
+
+Func Stream_Event_Buffering($State)
+	debug("Buffering on " & $pobj.network.bufferingProgress)
+	debug("Download on " & $Pobj.network.downloadProgress)
+EndFunc
 
 Func StreamBuild()
 	Global $Streams[IniRead("db\settings.ini", "Stream", 0, 0)+1]
