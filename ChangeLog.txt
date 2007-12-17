@@ -179,6 +179,9 @@ To Fix:
 => Trayicon
 => CVS-Rep for updater
 
+Many bugfixes, reviped stream, new plugin: MiniPPlayer, crashsystem: Checks for crashes and instructs user what to do
+
+
 => 0.9.5 beta:
 - Added:
 => Pluginsystem with PHP-Backend for the plugins. Possibility to en/disable plugins and get some information about them. Autodownloads not existing plugins.
