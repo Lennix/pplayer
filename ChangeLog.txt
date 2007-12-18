@@ -190,6 +190,7 @@ Many bugfixes, reviped stream, new plugin: MiniPPlayer, crashsystem: Checks for 
 - spalten inner stream-GUI nicht korrekt (recht klein)
 - "..." on SongView
 - Enhance PlayList: "Play,Delete,SavePlaylist,SaveSelected,Load"
+- PPlayer adding jpg's to playlist
 
 => 0.9.5 beta:
 - Added:
