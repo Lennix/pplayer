@@ -219,11 +219,7 @@ Func Playing($id, $DND = False)
 		EndIf
 		PluginTrigger("SongSearched", $id, $tag)
 	EndIf
-	If FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then ; Load Cover if not exists
-		GUICtrlSetImage($ShowAlbum, "covers\" & $tag[1] & "-" & $tag[2] & ".jpg")
-		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
-		PluginTrigger("SongCoverLoaded")
-	EndIf
+	Showcover($tag)
 	Outqueue($tag[3], $tag[1]); Song is no longer in queue
 	Focus($id)
 	$ActiveSongSimilar = $similar
@@ -281,6 +277,18 @@ Func Playing($id, $DND = False)
 	UpdateLabelInfo(StringSplit("||||||-1|", "|"), StringSplit("|", "|"))
 	Return True
 EndFunc   ;==>Playing
+
+Func ShowCover($tag)
+	If FileExists(debug(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg")) Then
+		GUICtrlSetImage($ShowAlbum, StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg")
+		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
+		PluginTrigger("SongCoverLoaded")
+	ElseIf FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then ; Load Cover if not exists
+		GUICtrlSetImage($ShowAlbum, "covers\" & $tag[1] & "-" & $tag[2] & ".jpg")
+		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
+		PluginTrigger("SongCoverLoaded")
+	EndIf
+EndFunc
 
 Func LoadSongInfo($Filepath, ByRef $tag, $id = -1)
 	$InDB = False
@@ -403,11 +411,7 @@ Func Play_active()
 	UpdateLabelInfo($tag, $similar)
 	PluginTrigger("SongInformationLoaded", $activelistid, $tag)
 	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
-	If FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then ; Load Cover if not exists
-		GUICtrlSetImage($ShowAlbum, "covers\" & $tag[1] & "-" & $tag[2] & ".jpg")
-		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
-		PluginTrigger("SongCoverLoaded")
-	EndIf
+	ShowCover($tag)
 EndFunc   ;==>Play_active
 
 Func Play($filename)
@@ -1695,7 +1699,6 @@ Func Startup()
 	AdlibEnable("global_check", 500)
 	db_check()
 	XSkinTrayBox("PPlayer Info", "Up and running")
-	If $CmdLine[0] > 0 Then SetList($CmdLine[1])
 	ErrorWrite("Startup took " & Round(TimerDiff($Begin) / 1000, 4) & " sec")
 	PluginTrigger("OnPPlayerLoaded")
 EndFunc   ;==>Startup
@@ -1858,6 +1861,11 @@ Func logoff()
 		GUIRegisterMsg($WM_List, "")
 		GUIRegisterMsg($WM_NOTIFY, "") ; Very slowing...
 		GUIRegisterMsg($WM_COPYDATA, "")
+		$msg = ""
+		For $i = $activelistid To UBound($liste) - 1
+			$msg &= $liste[$i] & "|"
+		Next
+		SaveSetting("infos","lastsong",StringTrimRight($msg,1))
 		WMClosePlayer()
 		_SQLite_QueryFinalize($hQuery)
 		_SQLite_Close()
@@ -2014,11 +2022,11 @@ Func AddWithDialog()
 	$check = 1
 EndFunc   ;==>AddWithDialog
 
-Func AddToList()
-	For $i = 0 To UBound($DroppedFiles) - 1
+Func AddToList() 
+	For $i = 0 To UBound($DroppedFiles) - 1 
 		SetList($DroppedFiles[$i])
-	Next
-EndFunc   ;==>AddToList
+	Next 
+EndFunc ;==>AddToList 
 
 Func SetList($filename)
 	If StringLen($filename) > 0 Then
@@ -2026,6 +2034,12 @@ Func SetList($filename)
 			$Line = StringTrimLeft($filename, 10)
 			If StringLeft($Line, 7) <> "http://"  Then $Line = "http://" & $Line
 			$filename = $Line
+		EndIf
+		If StringInStr(FileGetAttrib($filename),"D") Then
+			$Files = _FileSearch($filename,"*.mp3;*.wma") 
+			For $i = 1 To $Files[0]
+				SetList($Files[$i])
+			Next
 		EndIf
 		$tag = ReadFileInfo($filename)
 		If Not @error Then
@@ -2066,7 +2080,11 @@ Func DelFromList()
 			_ArrayDelete($liste, $ItemSel[$i])
 		Next
 		_GUICtrlListView_DeleteItemsSelected($lieder)
-		If $PlayNext Then NextInList()
+		If $PlayNext Then
+			NextInList()
+		Else
+			Focus($activelistid)
+		EndIf
 	Else
 		Error("No item(s) selected")
 	EndIf
@@ -2596,7 +2614,7 @@ Func LoadSetting($Sec, $Key, $default)
 EndFunc   ;==>LoadSetting
 
 Func SaveSetting($Sec, $Key, $Val)
-	_IniWrite("db\settings.ini", $Sec, $Key, $Val)
+	IniWrite("db\settings.ini", $Sec, $Key, $Val)
 EndFunc   ;==>SaveSetting
 
 #endregion
