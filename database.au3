@@ -178,7 +178,7 @@ Func DatabaseWork()
 	If StringRight($dir,1) == "\" Then $Dir = StringTrimRight($Dir,1)
 	IniWrite("db\settings.ini","infos","lastdir",$dir)
 	GUICtrlSetData($Label1,"Scanning..." & @CRLF & "This may take some time")
-	$Files = _FileSearch($dir,"*.mp3;*.wma",0,'',True)
+	$Files = _FileSearch($dir,"*.mp3;*.wma;*.ogg",0,'',True)
 	GUICtrlSetData($label1,"Adding files..." & @CRLF & "Time left: " & @CRLF & "Estimated time: " & @CRLF & "Time gone: " & @CRLF & @CRLF & "Percent:")
 	Global $TotalTime = TimerInit()
 	Global $FilesFound = $Files[0]
