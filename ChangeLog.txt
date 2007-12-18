@@ -191,6 +191,10 @@ Many bugfixes, reviped stream, new plugin: MiniPPlayer, crashsystem: Checks for 
 - "..." on SongView
 - Enhance PlayList: "Play,Delete,SavePlaylist,SaveSelected,Load"
 - PPlayer adding jpg's to playlist
+- Stream not updating information... (Pause/Resume -> works)
+- Stream -> Normal fileplay "Stream @ 320kb/s" - PlayingStream doesn't change fast enough... (skips song)
+- Changing a song takes over 10 seconds (new song plays but info is the old one)
+- jpgs -> stream?!
 
 => 0.9.5 beta:
 - Added:
