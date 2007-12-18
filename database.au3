@@ -188,6 +188,8 @@ Func DatabaseWork()
 			DatabaseProgressSet($i)
 		ElseIf GUIGetMsg() == $Database_Icon[1] Then
 			GUIDelete($Database_GUI)
+			_SQLite_Close()
+			_SQLite_Shutdown()
 			Exit 0
 		EndIf
 		AddFile($Files[$i])
