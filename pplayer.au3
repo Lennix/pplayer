@@ -642,8 +642,8 @@ Func Rate_GUI()
 		Return ""
 	Else
 		$Rating = InputBox("PPlayer - Rating", "How should I change the rating?" & @CRLF & StringTrimLeft($liste[$ItemSel[1]], StringInStr($liste[$ItemSel[1]], "\", 0, -1)) & @CRLF & @CRLF & "Ex: '2' or '-6'")
+		If @error Then Return ""
 	EndIf
-	If @error Then Return ""
 	$rate = Int($Rating)
 	If $rate <> 0 Then
 		Rate($liste[$ItemSel[1]], $rate)
