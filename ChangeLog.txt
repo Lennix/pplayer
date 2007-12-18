@@ -181,6 +181,13 @@ To Fix:
 
 Many bugfixes, reviped stream, new plugin: MiniPPlayer, crashsystem: Checks for crashes and instructs user what to do
 
+- BugReport: Fehlt bei 0.9.4 wird aber via Plugins.au3 geladen
+- Plugins checked (in List) but not activated
+- Verify nicht mehr wichtig (ViewLog kann nun über SongView geschehen)
+- kxf's werden nicht upgedatet (vllt wie Skinsystem arrangieren)
+- iconfiles auch nicht
+- stream lädt sehr lange, keine Rückmeldung an den nutzer (läuft es jetzt oder nicht)
+- spalten inner stream-GUI nicht korrekt (recht klein)
 
 => 0.9.5 beta:
 - Added:
