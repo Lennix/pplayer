@@ -31,6 +31,17 @@
 	http://pplayer.wiki.sourceforge.net/Contributors
 #ce
 
+#region Includes
+#include"include\WMP.au3"
+#include"include\XSkin.au3"
+#include"include\ListView.au3"
+#include"include\default\SQLite.au3"
+#include"include\default\SQLite.dll.au3"
+#include"include\default\GuiStatusBar.au3"
+#include"include\default\GUIConstants.au3"
+#include"include\default\GuiComboBox.au3"
+#endregion
+
 Global $PP_Dir = @ScriptDir & "\"
 FileChangeDir($PP_Dir)
 
@@ -102,17 +113,6 @@ If Not @Compiled Then
 		EndIf
 	EndIf
 EndIf
-
-#region Includes
-#include"include\WMP.au3"
-#include"include\XSkin.au3"
-#include"include\ListView.au3"
-#include"include\default\SQLite.au3"
-#include"include\default\SQLite.dll.au3"
-#include"include\default\GuiStatusBar.au3"
-#include"include\default\GUIConstants.au3"
-#include"include\default\GuiComboBox.au3"
-#endregion
 
 Opt("GUIOnEventMode", 1)
 Opt("TrayAutoPause", 0)
