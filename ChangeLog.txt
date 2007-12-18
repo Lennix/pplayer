@@ -188,6 +188,7 @@ Many bugfixes, reviped stream, new plugin: MiniPPlayer, crashsystem: Checks for 
 - iconfiles auch nicht
 - stream lädt sehr lange, keine Rückmeldung an den nutzer (läuft es jetzt oder nicht)
 - spalten inner stream-GUI nicht korrekt (recht klein)
+- "..." on SongView
 
 => 0.9.5 beta:
 - Added:
