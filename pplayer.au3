@@ -2041,10 +2041,15 @@ Func SetList($filename)
 			$filename = $Line
 		EndIf
 		If StringInStr(FileGetAttrib($filename),"D") Then
-			$Files = _FileSearch($filename,"*.mp3;*.wma") 
-			For $i = 1 To $Files[0]
-				SetList($Files[$i])
-			Next
+			$Files = _FileSearch($filename,"*",0,"",True) 
+			If IsArray($Files) Then
+				For $i = 1 To $Files[0]
+					SetList($Files[$i])
+				Next
+			EndIf
+			Return ""
+		ElseIf StringLen(_GetExtProperty($filename,21)) == 0 And FileExists($filename) Then
+			Return ""
 		EndIf
 		$tag = ReadFileInfo($filename)
 		If Not @error Then
