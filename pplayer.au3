@@ -1685,6 +1685,11 @@ Func Startup()
 	BuildGUIs()
 	PluginTrigger("CreateCustomGUI")
 	Show()
+	If $CmdLine[0] > 0 Then SetList($CmdLine[1])
+	$msg = StringSplit(LoadSetting("infos","lastsong",""),"|")
+	For $i = 1 To $msg[0]
+		SetList($msg[$i])
+	Next
 	StartTray()
 	Opt("OnExitFunc", "logoff")
 	GUIRegisterMsg($WM_DROPFILES, "WM_DROPFILES_FUNC")
