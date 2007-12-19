@@ -262,7 +262,7 @@ Func Playing($id, $DND = False)
 		GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
 		WebAnnounce()
 	EndIf
-	If $Pos * (1.1) > $Dur Then
+	If $Pos > $Dur * (LoadSetting("settings","ratetime",90)/100) Then
 		PluginTrigger("SongRatingIncreased", $id, $tag, $Dur)
 		Rate($Filepath, "1")
 		SongHeard($tag, $Dur)
@@ -279,6 +279,7 @@ Func Playing($id, $DND = False)
 EndFunc   ;==>Playing
 
 Func ShowCover($tag)
+	If LoadSetting("settings","coverload",$GUI_CHECKED) == $GUI_UNCHECKED Then Return ""
 	If FileExists(debug(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg")) Then
 		GUICtrlSetImage($ShowAlbum, StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg")
 		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
@@ -401,6 +402,7 @@ Func Play_active()
 	$dClicked = False
 	Focus($activelistid)
 	$next_sound = Play($liste[$activelistid])
+	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	ChangeVol()
 	Dim $tag[9], $similar[1]
 	If LoadSongInfo($liste[$activelistid], $tag, $activelistid) Then ; Load Song Information and display
@@ -410,12 +412,15 @@ Func Play_active()
 	EndIf
 	UpdateLabelInfo($tag, $similar)
 	PluginTrigger("SongInformationLoaded", $activelistid, $tag)
-	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	ShowCover($tag)
 EndFunc   ;==>Play_active
 
 Func Play($filename)
 	$active_sound = WMOpenFile($filename)
+	If LoadSetting("infos","lastsongpos",0) > 0 Then
+		WMSetPosition(LoadSetting("infos","lastsongpos",0))
+		SaveSetting("infos","lastsongpos",0)
+	EndIf
 	WMPlay($filename)
 	GUICtrlSetImage($pause_button, $PP_IcoFolder, 6)
 	Return $active_sound
@@ -472,21 +477,30 @@ Func SetNext($similar, $Info, $Retry = False, $RetryTime = 0)
 	EndIf
 	Local $NextSongs[1]
 	Dim $tag[8]
+	$msg = 'SELECT * FROM Songs WHERE ' 
 	Switch GUICtrlRead($ModeCheck[1])
 		Case "Similar Band"
-			$msg = ''
+			$msg2 = ''
 			For $i = 1 To $Similars
-				$msg &= 'Artist = "' & $similar[$i] & '" OR '
+				$msg2 &= 'Artist = "' & $similar[$i] & '" OR '
 			Next
-			$msg = StringTrimRight($msg, 3)
-			_SQLite_Query(-1, 'SELECT * FROM Songs WHERE ' & $msg & ';', $hQuery) ; the query
+			$msg &= StringTrimRight($msg2, 3)
 		Case "Genre"
-			_SQLite_Query(-1, 'SELECT * FROM Songs WHERE Genre = "' & $Info[4] & '";', $hQuery) ; the query
+			$msg &= 'Genre = "' & $Info[4] & '"'
 		Case "Band"
-			_SQLite_Query(-1, 'SELECT * FROM Songs WHERE Artist = "' & $Info[1] & '";', $hQuery) ; the query
+			$msg &= 'Artist = "' & $Info[1] & '"'
 		Case "Album"
-			_SQLite_Query(-1, 'SELECT * FROM Songs WHERE Album = "' & $Info[2] & '";', $hQuery) ; the query
+			$msg &= 'Album = "' & $Info[2] & '"'
 	EndSwitch
+	If StringLen(LoadSetting("settings","ExcludedTags","")) > 0 Then
+		$Keyword = StringSplit(LoadSetting("settings","ExcludedTags","")," ")
+		$msg2 = ""
+		For $i = 1 To $Keyword[0]
+			$msg2 &= ' AND NOT (Artist LIKE "%' & $Keyword[$i] & '%" OR Genre LIKE "%' & $Keyword[$i] & '%" OR Track LIKE "%' & $Keyword[$i] & '%" OR Album LIKE "%' & $Keyword[$i] & '%" OR Path LIKE "%' & $Keyword[$i] & '%")'
+		Next
+		$msg &= $msg2
+	EndIf
+	_SQLite_Query(-1,$msg & ";",$hQuery)
 	While _SQLite_FetchData($hQuery, $tag) = $SQLITE_OK
 		If FileExists($tag[5]) And Not CheckQueue($tag[2], $tag[0]) And _
 				($tag[7] > 1 And ($Retry Or Random(0, 100) > $tag[7] * 4.5)) And _
@@ -753,49 +767,35 @@ Func SettingsBuild()
 	GUICtrlSetOnEvent(-1, "Settings_Change")
 	
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	; - PlayMode
+	#Region PlayMode
 	Global $SettingsTabSheet2 = GUICtrlCreateTabItem("PlayMode")
-	; PlayMode - General
-	#cs
-	Global $SettingsGroup3 = GUICtrlCreateGroup("General", 8, 32, 473, 139)
-	Global $SettingsLabel8 = GUICtrlCreateLabel("Time to block a song until its played again (min)", 16, 56, 226, 17)
-	Global $SettingsPlayModeInput1 = GUICtrlCreateInput(GetOpt("MinLastPlayed"), 272, 56, 201, 21)
-	Global $SettingsLabel9 = GUICtrlCreateLabel("Song-Popup (Notification)", 16, 88, 125, 17)
-	Global $SettingsPlayModeCheckbox1 = GUICtrlCreateCheckbox("", 272, 88, 201, 17)
-	GUICtrlSetState(-1, GetOpt("Popup"))
-	GUICtrlSetOnEvent(-1, "Settings_Change")
-	Global $SettingsPlayModeSlider1 = GUICtrlCreateSlider(16, 136, 457, 25)
-	GUICtrlSetLimit(-1, 10, 1)
-	GUICtrlSetData(-1, GetOpt("SimilarBands"))
-	GUICtrlSetOnEvent(-1, "SimilarSliderChange")
-	GUICtrlCreateLabel("Similar Bands available for search:", 16, 112, 171, 18)
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	#ce
 	Global $SettingsPlayModeGroup1 = GUICtrlCreateGroup("General", 8, 32, 473, 281)
 	Global $SettingsPlayModeSlider1 = GUICtrlCreateSlider(16, 144, 457, 25)
 	GUICtrlSetLimit(-1, 10, 1)
 	GUICtrlSetData(-1, GetOpt("SimilarBands"))
 	GUICtrlSetOnEvent(-1, "SimilarSliderChange")
 	Global $SettingsPlayModeLabel3 = GUICtrlCreateLabel("Similar bands available for search", 16, 120, 161, 17)
-	Global $SettingsPlayModeCheckbox1 = GUICtrlCreateCheckbox("", 264, 184, 201, 25)
-	GUICtrlSetState(-1, GetOpt("Popup"))
+	Global $SettingsPlayModeCheckbox2 = GUICtrlCreateCheckbox("", 264, 184, 201, 25)
+	GUICtrlSetState(-1,LoadSetting("settings","coverload",$GUI_CHECKED))
 	GUICtrlSetOnEvent(-1, "Settings_Change")
 	Global $SettingsPlayModeLabel4 = GUICtrlCreateLabel("Load Covers", 16, 184, 64, 17)
 	Global $SettingsPlayModeLabel6 = GUICtrlCreateLabel("Time to block a song until its played again (min)", 16, 56, 226, 17)
 	Global $SettingsPlayModeLabel7 = GUICtrlCreateLabel("Time a song should be played until its rated (%)", 16, 248, 224, 17)
 	Global $SettingsPlayModeLabel8 = GUICtrlCreateLabel("Load last song(s) on start", 16, 216, 122, 17)
-	Global $SettingsPlayModeCheckbox2 = GUICtrlCreateCheckbox("", 264, 216, 201, 25)
+	Global $SettingsPlayModeCheckbox3 = GUICtrlCreateCheckbox("", 264, 216, 201, 25)
+	GUICtrlSetState(-1,LoadSetting("settings","loadsongs",$GUI_UNCHECKED))
 	GUICtrlSetOnEvent(-1, "Settings_Change")
 	Global $SettingsPlayModeInput1 = GUICtrlCreateInput(GetOpt("MinLastPlayed"), 264, 56, 209, 21)
-	Global $SettingsPlayModeInput2 = GUICtrlCreateInput("", 264, 248, 209, 21)
-	Global $SettingsPlayModeInput3 = GUICtrlCreateInput("", 264, 280, 209, 21)
-	Global $SettingsPlayModeLabel11 = GUICtrlCreateLabel("Songs that should be excluded from AutoSearch", 16, 280, 232, 17)
+	Global $SettingsPlayModeInput2 = GUICtrlCreateInput(LoadSetting("settings","ratetime",90), 264, 248, 209, 21)
+	Global $SettingsPlayModeInput3 = GUICtrlCreateInput(LoadSetting("settings","ExcludedTags",""), 264, 280, 209, 21)
+	Global $SettingsPlayModeLabel11 = GUICtrlCreateLabel("Songs (Keywords) that should be excluded from AutoSearch (seperated by ',')", 16, 280, 232, 25)
 	Global $SettingsPlayModeLabel1 = GUICtrlCreateLabel("Song-Popup (Notification)", 16, 88, 125, 17)
-	Global $SettingsPlayModeCheckbox3 = GUICtrlCreateCheckbox("", 264, 88, 201, 25)
+	Global $SettingsPlayModeCheckbox1 = GUICtrlCreateCheckbox("", 264, 88, 201, 25)
+	GUICtrlSetState(-1, GetOpt("Popup"))
 	GUICtrlSetOnEvent(-1, "Settings_Change")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
+	#endregion
 	; - SongView
-	Opt ("GUICoordMode", 0)
 	Global $SettingsTabSheet3 = GUICtrlCreateTabItem("SongView")
 	$id = _GetCPUID()
 	; SongView - URLs
@@ -899,8 +899,15 @@ Func Settings_close()
 	GUICtrlSetData($SettingsInput2, GetOpt("TextColor"))
 	GUICtrlSetData($SettingsSlider1, GetOpt("Trans"))
 	GUICtrlSetState($SettingsCheckbox1, GetOpt("Ani"))
-	GUICtrlSetData($SettingsPlayModeInput1, GetOpt("MinLastPlayed"))
+	
+	; PlayMode
 	GUICtrlSetState($SettingsPlayModeCheckbox1, GetOpt("PopUp"))
+	GUICtrlSetData($SettingsPlayModeInput1, GetOpt("MinLastPlayed"))
+	GUICtrlSetState($SettingsPlayModeCheckbox2,LoadSetting("settings", "CoverLoad",$GUI_CHECKED))
+	GUICtrlSetState($SettingsPlayModeCheckbox3,LoadSetting("settings", "LoadSongs",$GUI_UNCHECKED))
+	GUICtrlSetData($SettingsPlayModeInput2,LoadSetting("settings", "Ratetime",90))
+	GUICtrlSetData($SettingsPlayModeInput3,LoadSetting("settings", "ExcludedTags",""))
+	
 	PluginTrigger("OnSettingsClose")
 EndFunc   ;==>Settings_close
 
@@ -921,6 +928,7 @@ Func SettingsChooseColor()
 EndFunc   ;==>SettingsChooseColor
 
 Func Settings_save()
+	#region Restart?
 	$Restart = False
 	If GetOpt("BkColor") <> GUICtrlRead($SettingsInput1) Then $Restart = True
 	If GetOpt("TextColor") <> GUICtrlRead($SettingsInput2) Then $Restart = True
@@ -932,19 +940,30 @@ Func Settings_save()
 		CreateGUIIni("resource\" & GUICtrlRead($SettingsCombo5) & "PlayMode.kxf")
 		$Restart = True
 	EndIf
-	SaveSetting("settings", "MinLastPlayed", GUICtrlRead($SettingsPlayModeInput1))
-	SaveSetting("settings", "Trans", GUICtrlRead($SettingsSlider1))
-	SaveSetting("settings", "Ani", GUICtrlRead($SettingsCheckbox1))
+	#endregion
+	#region SongView-Tab
+	SaveSetting("SongView", "name", GUICtrlRead($SongViewNickNameInput))
+	SaveSetting("SongView", "text", GUICtrlRead($SongViewTextInput))
+	#endregion
+	#region General-Tab
 	SaveSetting("settings", "BkColor", GUICtrlRead($SettingsInput1))
 	SaveSetting("settings", "TextColor", GUICtrlRead($SettingsInput2))
+	SaveSetting("settings", "Trans", GUICtrlRead($SettingsSlider1))
+	SaveSetting("settings", "Ani", GUICtrlRead($SettingsCheckbox1))
 	SaveSetting("settings", "PPlayerkxf", GUICtrlRead($SettingsCombo4))
 	SaveSetting("settings", "PlayModekxf", GUICtrlRead($SettingsCombo5))
 	SaveSetting("settings", "icos", GUICtrlRead($SettingsCombo3))
-	SaveSetting("settings", "PopUp", GUICtrlRead($SettingsPlayModeCheckbox1))
 	SaveSetting("settings", "Statusbar", GUICtrlRead($SettingsCheckbox4))
-	SaveSetting("SongView", "name", GUICtrlRead($SongViewNickNameInput))
-	SaveSetting("SongView", "text", GUICtrlRead($SongViewTextInput))
-	
+	#endregion
+	#region PlayMode-Tab
+	SaveSetting("settings", "MinLastPlayed", GUICtrlRead($SettingsPlayModeInput1))
+	SaveSetting("settings", "PopUp", GUICtrlRead($SettingsPlayModeCheckbox1))
+	SaveSetting("settings", "CoverLoad", GUICtrlRead($SettingsPlayModeCheckbox2))
+	SaveSetting("settings", "LoadSongs", GUICtrlRead($SettingsPlayModeCheckbox3))
+	SaveSetting("settings", "Ratetime", GUICtrlRead($SettingsPlayModeInput2))
+	SaveSetting("settings", "ExcludedTags", GUICtrlRead($SettingsPlayModeInput3))
+	#endregion
+	#region Plugins
 	$FH = FileOpen("Plugins\Plugins.au3", 2)
 	For $i = 0 To _GUICtrlListView_GetItemCount($PluginsListView) - 1
 		If _GUICtrlListView_GetItemChecked($PluginsListView, $i) == True Then
@@ -976,6 +995,8 @@ Func Settings_save()
 		EndIf
 	Next
 	FileClose($FH)
+	#endregion
+	#region Skin
 	$Skin = GUICtrlRead($SettingsCombo1)
 	If StringLen($Skin) > 0 And GetOpt("skin") <> $Skin Then
 		Request($PP_HP & "skin.php?skin=" & $Skin & "&select=true")
@@ -984,6 +1005,8 @@ Func Settings_save()
 		GUICtrlSetData($SettingsInput2, StringTrimLeft(IniRead("Skins\" & $Skin & "\Skin.dat", "color", "fontcolor", 0), 2))
 		$Restart = True
 	EndIf
+	#endregion
+	
 	GUICtrlSetState($SettingsButton2, $GUI_DISABLE)
 	PluginTrigger("OnSettingsSave")
 	If $Restart And MsgBox(4, "PPlayer - Settings", "Do you want to restart PPlayer?") == 6 Then
@@ -1608,7 +1631,7 @@ Func AddToDB($Filepath)
 	If @error > 0 Then Return SetError(1, 0, False)
 	$genre = UpdateGenre($tag[1], $tag[3])
 	If Not @error Then $tag[4] = $genre
-	If Not FileExists(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg") And Not FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then LoadCover($tag[1], $tag[2])
+	If LoadSetting("settings","coverload",$GUI_CHECKED) == $GUI_CHECKED And Not FileExists(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg") And Not FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then LoadCover($tag[1], $tag[2])
 	ReDim $tag[9]
 	$message = ""
 	$tag[6] = $Filepath
@@ -1713,10 +1736,12 @@ Func Startup()
 	PluginTrigger("CreateCustomGUI")
 	Show()
 	If $CmdLine[0] > 0 Then SetList($CmdLine[1])
-	$msg = StringSplit(LoadSetting("infos","lastsong",""),"|")
-	For $i = 1 To $msg[0]
-		SetList($msg[$i])
-	Next
+	If LoadSetting("settings","loadsongs",$GUI_UNCHECKED) == $GUI_CHECKED Then
+		$msg = StringSplit(LoadSetting("infos","lastsong",""),"|")
+		For $i = 1 To $msg[0]
+			SetList($msg[$i])
+		Next
+	EndIf
 	StartTray()
 	Opt("OnExitFunc", "logoff")
 	GUIRegisterMsg($WM_DROPFILES, "WM_DROPFILES_FUNC")
@@ -1893,11 +1918,14 @@ Func logoff()
 		GUIRegisterMsg($WM_List, "")
 		GUIRegisterMsg($WM_NOTIFY, "") ; Very slowing...
 		GUIRegisterMsg($WM_COPYDATA, "")
-		$msg = ""
-		For $i = $activelistid To UBound($liste) - 1
-			$msg &= $liste[$i] & "|"
-		Next
-		SaveSetting("infos","lastsong",StringTrimRight($msg,1))
+		If UBound($liste) > 1 Then
+			$msg = ""
+			For $i = $activelistid To UBound($liste) - 1
+				$msg &= $liste[$i] & "|"
+			Next
+			SaveSetting("infos","lastsong",StringTrimRight($msg,1))
+			SaveSetting("infos","lastsongpos",Int(WMGetPosition()))
+		EndIf
 		WMClosePlayer()
 		_SQLite_QueryFinalize($hQuery)
 		_SQLite_Close()
