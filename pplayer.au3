@@ -402,7 +402,6 @@ Func Play_active()
 	$dClicked = False
 	Focus($activelistid)
 	$next_sound = Play($liste[$activelistid])
-	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	ChangeVol()
 	Dim $tag[9], $similar[1]
 	If LoadSongInfo($liste[$activelistid], $tag, $activelistid) Then ; Load Song Information and display
@@ -410,6 +409,7 @@ Func Play_active()
 		LastPlayed($tag[3], $tag[1])
 		UpdateList($activelistid, $tag[3], $tag[1])
 	EndIf
+	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	UpdateLabelInfo($tag, $similar)
 	PluginTrigger("SongInformationLoaded", $activelistid, $tag)
 	ShowCover($tag)
