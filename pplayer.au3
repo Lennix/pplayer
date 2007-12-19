@@ -1924,7 +1924,7 @@ Func logoff()
 		GUIRegisterMsg($WM_List, "")
 		GUIRegisterMsg($WM_NOTIFY, "") ; Very slowing...
 		GUIRegisterMsg($WM_COPYDATA, "")
-		If UBound($liste) > 1 Then
+		If LoadSetting("settings","Loadsongs",$GUI_UNCHECKED) == $GUI_CHECKED And UBound($liste) > 1 Then
 			$msg = ""
 			For $i = $activelistid To UBound($liste) - 1
 				$msg &= $liste[$i] & "|"
