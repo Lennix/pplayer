@@ -181,7 +181,7 @@ Func Playing($id, $DND = False)
 	EndIf
 	Dim $tag[9]
 	$LeaveWhile = False
-	Dim $similar[GUICtrlRead($SimilarSlider) + 1]
+	Dim $similar[GUICtrlRead($SettingsPlayModeSlider1) + 1]
 	If (Not FileExists($Filepath)) And Not StringInStr($Filepath, "://") Then
 		Error("Unable to play song",0,5)
 		Return "Unable"
@@ -457,7 +457,7 @@ EndFunc   ;==>HookPlayPause
 Func SetNext($similar, $Info, $Retry = False, $RetryTime = 0)
 	If Not IsArray($similar) And Not IsArray($Info) Then Return False
 	If GUICtrlRead($ModeCheck[1]) == "Similar Band"  Then
-		$Similars = GUICtrlRead($SimilarSlider)
+		$Similars = GUICtrlRead($SettingsPlayModeSlider1)
 		If UBound($similar) - 1 < $Similars Then $Similars = UBound($similar) - 1
 		ReDim $similar[$Similars + 1]
 		If $similar[0] == 0 Then
@@ -756,20 +756,46 @@ Func SettingsBuild()
 	; - PlayMode
 	Global $SettingsTabSheet2 = GUICtrlCreateTabItem("PlayMode")
 	; PlayMode - General
+	#cs
 	Global $SettingsGroup3 = GUICtrlCreateGroup("General", 8, 32, 473, 139)
 	Global $SettingsLabel8 = GUICtrlCreateLabel("Time to block a song until its played again (min)", 16, 56, 226, 17)
-	Global $SettingsInput4 = GUICtrlCreateInput(GetOpt("MinLastPlayed"), 272, 56, 201, 21)
+	Global $SettingsPlayModeInput1 = GUICtrlCreateInput(GetOpt("MinLastPlayed"), 272, 56, 201, 21)
 	Global $SettingsLabel9 = GUICtrlCreateLabel("Song-Popup (Notification)", 16, 88, 125, 17)
-	Global $SettingsCheckbox3 = GUICtrlCreateCheckbox("", 272, 88, 201, 17)
+	Global $SettingsPlayModeCheckbox1 = GUICtrlCreateCheckbox("", 272, 88, 201, 17)
 	GUICtrlSetState(-1, GetOpt("Popup"))
 	GUICtrlSetOnEvent(-1, "Settings_Change")
-	Global $SimilarSlider = GUICtrlCreateSlider(16, 136, 457, 25)
+	Global $SettingsPlayModeSlider1 = GUICtrlCreateSlider(16, 136, 457, 25)
 	GUICtrlSetLimit(-1, 10, 1)
 	GUICtrlSetData(-1, GetOpt("SimilarBands"))
 	GUICtrlSetOnEvent(-1, "SimilarSliderChange")
 	GUICtrlCreateLabel("Similar Bands available for search:", 16, 112, 171, 18)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
+	#ce
+	Global $SettingsPlayModeGroup1 = GUICtrlCreateGroup("General", 8, 32, 473, 281)
+	Global $SettingsPlayModeSlider1 = GUICtrlCreateSlider(16, 144, 457, 25)
+	GUICtrlSetLimit(-1, 10, 1)
+	GUICtrlSetData(-1, GetOpt("SimilarBands"))
+	GUICtrlSetOnEvent(-1, "SimilarSliderChange")
+	Global $SettingsPlayModeLabel3 = GUICtrlCreateLabel("Similar bands available for search", 16, 120, 161, 17)
+	Global $SettingsPlayModeCheckbox1 = GUICtrlCreateCheckbox("", 264, 184, 201, 25)
+	GUICtrlSetState(-1, GetOpt("Popup"))
+	GUICtrlSetOnEvent(-1, "Settings_Change")
+	Global $SettingsPlayModeLabel4 = GUICtrlCreateLabel("Load Covers", 16, 184, 64, 17)
+	Global $SettingsPlayModeLabel6 = GUICtrlCreateLabel("Time to block a song until its played again (min)", 16, 56, 226, 17)
+	Global $SettingsPlayModeLabel7 = GUICtrlCreateLabel("Time a song should be played until its rated (%)", 16, 248, 224, 17)
+	Global $SettingsPlayModeLabel8 = GUICtrlCreateLabel("Load last song(s) on start", 16, 216, 122, 17)
+	Global $SettingsPlayModeCheckbox2 = GUICtrlCreateCheckbox("", 264, 216, 201, 25)
+	GUICtrlSetOnEvent(-1, "Settings_Change")
+	Global $SettingsPlayModeInput1 = GUICtrlCreateInput(GetOpt("MinLastPlayed"), 264, 56, 209, 21)
+	Global $SettingsPlayModeInput2 = GUICtrlCreateInput("", 264, 248, 209, 21)
+	Global $SettingsPlayModeInput3 = GUICtrlCreateInput("", 264, 280, 209, 21)
+	Global $SettingsPlayModeLabel11 = GUICtrlCreateLabel("Songs that should be excluded from AutoSearch", 16, 280, 232, 17)
+	Global $SettingsPlayModeLabel1 = GUICtrlCreateLabel("Song-Popup (Notification)", 16, 88, 125, 17)
+	Global $SettingsPlayModeCheckbox3 = GUICtrlCreateCheckbox("", 264, 88, 201, 25)
+	GUICtrlSetOnEvent(-1, "Settings_Change")
+	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	; - SongView
+	Opt ("GUICoordMode", 0)
 	Global $SettingsTabSheet3 = GUICtrlCreateTabItem("SongView")
 	$id = _GetCPUID()
 	; SongView - URLs
@@ -873,8 +899,8 @@ Func Settings_close()
 	GUICtrlSetData($SettingsInput2, GetOpt("TextColor"))
 	GUICtrlSetData($SettingsSlider1, GetOpt("Trans"))
 	GUICtrlSetState($SettingsCheckbox1, GetOpt("Ani"))
-	GUICtrlSetData($SettingsInput4, GetOpt("MinLastPlayed"))
-	GUICtrlSetState($SettingsCheckbox3, GetOpt("PopUp"))
+	GUICtrlSetData($SettingsPlayModeInput1, GetOpt("MinLastPlayed"))
+	GUICtrlSetState($SettingsPlayModeCheckbox1, GetOpt("PopUp"))
 	PluginTrigger("OnSettingsClose")
 EndFunc   ;==>Settings_close
 
@@ -906,7 +932,7 @@ Func Settings_save()
 		CreateGUIIni("resource\" & GUICtrlRead($SettingsCombo5) & "PlayMode.kxf")
 		$Restart = True
 	EndIf
-	SaveSetting("settings", "MinLastPlayed", GUICtrlRead($SettingsInput4))
+	SaveSetting("settings", "MinLastPlayed", GUICtrlRead($SettingsPlayModeInput1))
 	SaveSetting("settings", "Trans", GUICtrlRead($SettingsSlider1))
 	SaveSetting("settings", "Ani", GUICtrlRead($SettingsCheckbox1))
 	SaveSetting("settings", "BkColor", GUICtrlRead($SettingsInput1))
@@ -914,7 +940,7 @@ Func Settings_save()
 	SaveSetting("settings", "PPlayerkxf", GUICtrlRead($SettingsCombo4))
 	SaveSetting("settings", "PlayModekxf", GUICtrlRead($SettingsCombo5))
 	SaveSetting("settings", "icos", GUICtrlRead($SettingsCombo3))
-	SaveSetting("settings", "PopUp", GUICtrlRead($SettingsCheckbox3))
+	SaveSetting("settings", "PopUp", GUICtrlRead($SettingsPlayModeCheckbox1))
 	SaveSetting("settings", "Statusbar", GUICtrlRead($SettingsCheckbox4))
 	SaveSetting("SongView", "name", GUICtrlRead($SongViewNickNameInput))
 	SaveSetting("SongView", "text", GUICtrlRead($SongViewTextInput))
@@ -1458,14 +1484,14 @@ Func UpdateLabelInfo($tag, $similar)
 		If StringLen($tag[$i]) > GIR("info_label", "Width") / 5.6 Then $tag[$i] = StringLeft($tag[$i], GIR("info_label", "Width") / 5.6) & "..."
 	Next
 	$message = $tag[3] & @CRLF & $tag[1] & @CRLF & $tag[2] & @CRLF & $tag[4] & @CRLF & $tag[5] & @CRLF & $tag[7] & @CRLF & $tag[8] & @CRLF
-	$Similars = GUICtrlRead($SimilarSlider)
+	$Similars = GUICtrlRead($SettingsPlayModeSlider1)
 	If $Similars > 6 Then $Similars = 6
 	If $Similars > $similar[0] Then $Similars = $similar[0]
 	If $Similars > 0 Then
 		For $i = 1 To $Similars
 			$message &= $similar[$i] & @CRLF
 		Next
-		If GUICtrlRead($SimilarSlider) > 6 Then $message &= "..."
+		If GUICtrlRead($SettingsPlayModeSlider1) > 6 Then $message &= "..."
 	Else
 		$message &= "No similar bands in Database"
 	EndIf
@@ -1531,7 +1557,7 @@ EndFunc   ;==>CalcPos
 
 Func SimilarSliderChange()
 	Settings_Change()
-	_IniWrite("db\settings.ini", "settings", "SimilarBands", GUICtrlRead($SimilarSlider))
+	_IniWrite("db\settings.ini", "settings", "SimilarBands", GUICtrlRead($SettingsPlayModeSlider1))
 EndFunc   ;==>SimilarSliderChange
 
 #endregion
