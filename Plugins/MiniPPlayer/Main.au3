@@ -52,3 +52,12 @@ EndFunc   ;==>MiniPPlayer_SongPlayPaused
 Func MiniPPlayer_SongPlayResumed()
 	GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 6)
 EndFunc   ;==>MiniPPlayer_SongPlayResumed
+
+Func MiniPPlayer_SongPlayStopped()
+	GUICtrlSetData($MiniPPlayerLabel1, "")
+	GUICtrlSetData($MiniPPlayerLabel2, "")
+EndFunc
+
+Func MiniPPlayer_OnExit()
+	GUIDelete($MiniPPlayerGui)
+EndFunc
