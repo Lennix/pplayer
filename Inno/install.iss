@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=PPlayer
-AppVerName=PPlayer 0.9.5 Release Candidate 2
+AppVerName=PPlayer 0.9.5 Release Candidate 3
 AppPublisher=Pascal Kühne
 AppPublisherURL=http://pplayer.net.ms
 AppSupportURL=http://sourceforge.net/projects/pplayer
@@ -11,7 +11,7 @@ AppUpdatesURL=http://sourceforge.net/projects/pplayer
 DefaultDirName={pf}\PPlayer
 DefaultGroupName=PPlayer
 AllowNoIcons=yes
-OutputBaseFilename=PPlayer_0.9.5RC2
+OutputBaseFilename=PPlayer_0.9.5RC3
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
