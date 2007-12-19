@@ -402,6 +402,7 @@ Func Play_active()
 	$dClicked = False
 	Focus($activelistid)
 	$next_sound = Play($liste[$activelistid])
+	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	ChangeVol()
 	Dim $tag[9], $similar[1]
 	If LoadSongInfo($liste[$activelistid], $tag, $activelistid) Then ; Load Song Information and display
@@ -409,7 +410,6 @@ Func Play_active()
 		LastPlayed($tag[3], $tag[1])
 		UpdateList($activelistid, $tag[3], $tag[1])
 	EndIf
-	If FileExists($liste[$activelistid]) Then CalcPos($next_sound)
 	UpdateLabelInfo($tag, $similar)
 	PluginTrigger("SongInformationLoaded", $activelistid, $tag)
 	ShowCover($tag)
@@ -420,6 +420,7 @@ Func Play($filename)
 	If LoadSetting("infos","lastsongpos",0) > 0 Then
 		WMSetPosition(LoadSetting("infos","lastsongpos",0))
 		SaveSetting("infos","lastsongpos",0)
+		UpdateLabelPos($active_sound)
 	EndIf
 	WMPlay($filename)
 	GUICtrlSetImage($pause_button, $PP_IcoFolder, 6)
@@ -1872,6 +1873,7 @@ Func StartGUI()
 	Global $Pos_Slider = GUICtrlCreateSlider(GIR("pos_slider", "left"), GIR("pos_slider", "top"), GIR("pos_slider", "width"), GIR("pos_slider", "height"), BitOR($TBS_BOTH, $TBS_NOTICKS, $TBS_FIXEDLENGTH))
 	GUICtrlSetData(-1, 0)
 	GUICtrlSetOnEvent(-1, "ChangePos")
+	GUICtrlSetLimit(-1, 1000, 0)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlSetBkColor(-1, "0x" & GetOpt("BkColor"))
 	Global $Vol_Slider = GUICtrlCreateSlider(GIR("vol_slider", "left"), GIR("vol_slider", "top"), GIR("vol_slider", "width"), GIR("vol_slider", "height"))
