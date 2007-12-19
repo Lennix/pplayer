@@ -183,7 +183,7 @@ Func Playing($id, $DND = False)
 	$LeaveWhile = False
 	Dim $similar[GUICtrlRead($SimilarSlider) + 1]
 	If (Not FileExists($Filepath)) And Not StringInStr($Filepath, "://") Then
-		Error("Unable to play song")
+		Error("Unable to play song",0,5)
 		Return "Unable"
 	EndIf
 	If Not $DND Then
@@ -1352,6 +1352,7 @@ EndFunc   ;==>SongHeard
 
 Func WebAnnounce($tag = "")
 	$bck = 1
+	$Verified = True
 	$textcolor = Dec(StringLeft(IniRead("db\settings.ini", "settings", "TextColor", ""), 2)) & "." & Dec(StringMid(IniRead("db\settings.ini", "settings", "TextColor", ""), 3, 2)) & "." & Dec(StringRight(IniRead("db\settings.ini", "settings", "TextColor", ""), 2))
 	$backcolor = Dec(StringLeft(IniRead("db\settings.ini", "settings", "BkColor", ""), 2)) & "." & Dec(StringMid(IniRead("db\settings.ini", "settings", "BkColor", ""), 3, 2)) & "." & Dec(StringRight(IniRead("db\settings.ini", "settings", "BkColor", ""), 2))
 	$msg = $PP_HP & "web.php?tc=" & $textcolor & "&bc=" & $backcolor & "&user=" & _GetCPUID() & "&username=" & IniRead("db\settings.ini", "SongView", "name", "No Nickname set") & "&Status="
@@ -1581,7 +1582,7 @@ Func AddToDB($Filepath)
 	If @error > 0 Then Return SetError(1, 0, False)
 	$genre = UpdateGenre($tag[1], $tag[3])
 	If Not @error Then $tag[4] = $genre
-	If Not FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then LoadCover($tag[1], $tag[2])
+	If Not FileExists(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg") And Not FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then LoadCover($tag[1], $tag[2])
 	ReDim $tag[9]
 	$message = ""
 	$tag[6] = $Filepath
@@ -1918,14 +1919,8 @@ EndFunc   ;==>NotifyMenu
 Func global_check()
 	If $check == 1 Then
 		$check = 0
-		If Not $Verified Then
-			Verify()
-			WebAnnounce()
-		EndIf
-		If IsObj($active_sound) Then
-			UpdateLabelPos($active_sound)
-			;ChangeVol()
-		EndIf
+		If Not $Verified Then WebAnnounce()
+		If IsObj($active_sound) Then UpdateLabelPos($active_sound)
 		$check = 1
 	EndIf
 EndFunc   ;==>global_check
@@ -1985,15 +1980,6 @@ Func db_check()
 	_SQLite_Exec(-1, "CREATE TABLE IF NOT EXISTS SongView (Played,Artist,Album,Track,Genre,Duration);") ; CREATE a Table
 EndFunc   ;==>db_check
 
-Func Verify()
-	$Input = Request($PP_HP & "verify.php?CODEtoVERIFY=LogIn&ID=" & _GetCPUID() & "&version=" & $version, 5)
-	If $Input <> "Trial"  Then $Input = "Premium"
-	$OldTitle = $Title
-	$Title = "PPlayer - V" & $version & " " & $Input & " " & Chr(169) & " Pascal"
-	WinSetTitle($OldTitle, "", $Title)
-	$Verified = True
-EndFunc   ;==>Verify
-
 Func CheckUDP()
 	While 1
 		$data = UDPRecv($Socket, 1000)
@@ -2041,22 +2027,29 @@ Func SetList($filename)
 			$filename = $Line
 		EndIf
 		If StringInStr(FileGetAttrib($filename),"D") Then
-			$Files = _FileSearch($filename,"*",0,"",True) 
+			$Files = _FileSearch($filename,"*.mp3;*.wma;*.ogg;*.wav",0,"",True) 
 			If IsArray($Files) Then
 				For $i = 1 To $Files[0]
-					SetList($Files[$i])
+					SetList(debug($Files[$i]))
 				Next
 			EndIf
 			Return ""
 		ElseIf StringLen(_GetExtProperty($filename,21)) == 0 And FileExists($filename) Then
 			Return ""
 		EndIf
-		$tag = ReadFileInfo($filename)
+		$tag = QueryDB($Filename)
 		If Not @error Then
 			$show = $tag[3] & " - " & $tag[1]
 			Inqueue($tag[3], $tag[1])
 		Else
-			$show = StringTrimLeft($filename, StringInStr($filename, "\", 1, -1))
+			$tag = ReadFileInfo($filename)
+			If Not @error Then
+				$show = $tag[3] & " - " & $tag[1]
+				Inqueue($tag[3], $tag[1])
+				AddToDB($filename)
+			Else
+				$show = StringTrimLeft($filename, StringInStr($filename, "\", 1, -1))
+			EndIf
 		EndIf
 		$id = _GUICtrlListView_AddItem($lieder, $show)
 		If $id > 0 Then ReDim $liste[UBound($liste) + 1]
