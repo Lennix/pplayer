@@ -97,7 +97,7 @@ EndIf
 
 Global $Begin = TimerInit()
 #region Opts
-Global $version = "0.9.5 RC2"
+Global $version = "0.9.5 RC3"
 Global $dbversion = "0.9"
 Global $backup = True
 
@@ -1843,6 +1843,7 @@ Func StartGUI()
 	$MenuButton = GUICtrlCreateIcon($PP_IcoFolder, 3, GIR("menu", "left"), GIR("menu", "top"), GIR("menu", "width"), GIR("menu", "height"))
 	GUICtrlSetOnEvent(-1, "NotifyMenu")
 	$Menu = GUICtrlCreateContextMenu($MenuButton)
+	
 	GUICtrlCreateMenuItem("Database", $Menu)
 	GUICtrlSetOnEvent(-1, "Database")
 	GUICtrlCreateMenuItem("Help", $Menu)
