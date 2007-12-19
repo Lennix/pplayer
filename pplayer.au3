@@ -271,10 +271,8 @@ Func Playing($id, $DND = False)
 		Rate($liste[$id], "-1")
 	EndIf
 	If GUICtrlRead($ModeCheck[2]) <> "Repeat"  And Not $LeaveWhile Then $activelistid += 1
-	GUICtrlSetState($ShowAlbum, $GUI_HIDE)
 	PluginTrigger("SongPlayed", $id, $tag)
 	UnFocus($id)
-	UpdateLabelInfo(StringSplit("||||||-1|", "|"), StringSplit("|", "|"))
 	Return True
 EndFunc   ;==>Playing
 
@@ -433,6 +431,8 @@ Func Stop()
 	PluginTrigger("SongPlayStopped")
 	WMStop()
 	GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
+	GUICtrlSetState($ShowAlbum, $GUI_HIDE)
+	UpdateLabelInfo(StringSplit("||||||-1|", "|"), StringSplit("|", "|"))
 EndFunc   ;==>Stop
 
 Func Pause()
