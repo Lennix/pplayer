@@ -1738,10 +1738,14 @@ Func Startup()
 	Show()
 	If $CmdLine[0] > 0 Then SetList($CmdLine[1])
 	If LoadSetting("settings","loadsongs",$GUI_UNCHECKED) == $GUI_CHECKED Then
+		$Playing = True
 		$msg = StringSplit(LoadSetting("infos","lastsong",""),"|")
 		For $i = 1 To $msg[0]
 			SetList($msg[$i])
 		Next
+		$msg = LoadSetting("infos","lastsongid",0)
+		Focus($msg)
+		Play_active()
 	EndIf
 	StartTray()
 	Opt("OnExitFunc", "logoff")
@@ -1928,11 +1932,12 @@ Func logoff()
 		GUIRegisterMsg($WM_COPYDATA, "")
 		If LoadSetting("settings","Loadsongs",$GUI_UNCHECKED) == $GUI_CHECKED And UBound($liste) > 1 Then
 			$msg = ""
-			For $i = $activelistid To UBound($liste) - 1
+			For $i = 0 To UBound($liste) - 1
 				$msg &= $liste[$i] & "|"
 			Next
 			SaveSetting("infos","lastsong",StringTrimRight($msg,1))
 			SaveSetting("infos","lastsongpos",Int(WMGetPosition()))
+			SaveSetting("infos","lastsongid",$activelistid)
 		EndIf
 		WMClosePlayer()
 		_SQLite_QueryFinalize($hQuery)
