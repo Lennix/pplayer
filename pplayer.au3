@@ -646,11 +646,12 @@ Func BuildGUIs()
 	PlaymodeBuild()
 	SettingsBuild()
 	StatBuild()
+	RateBuild()
 EndFunc   ;==>BuildGUIs
 
 #region -> Rate
 
-Func Rate_GUI()
+Func RateBuild()
 	#cs
 	$ItemSel = _GUICtrlListView_GetSelectedIndices($lieder, True)
 	If $ItemSel[0] == 0 Then
@@ -668,6 +669,50 @@ Func Rate_GUI()
 		Error("Invalid Rating")
 	EndIf
 	#ce
+	Global $RateIcon[22]
+	Global $RateGUI = XSkinGUICreate("PPlayer - Rate", 339+$factorX*2, 234+$factorY*2, $Skin_Folder,1,25,-1,-1,-1,$MainGUI)
+	XSkinIcon($RateGUI,3,StringSplit("RateClose|RateClose|RateHelp","|"))
+	$nr = 0
+	For $x = 8 To 296 Step 32
+		$nr += 1
+		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 120+$factorY, 32, 32)
+		GUICtrlSetOnEvent(-1,"RateOnClick")
+		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
+	Next
+	For $x = 8 To 296 Step 32
+		$nr += 1
+		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 152+$factorY, 32, 32)
+		GUICtrlSetOnEvent(-1,"RateOnClick")
+		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
+	Next
+	Global $RateButton1 = GUICtrlCreateButton("Save", 104+$factorX, 192+$factorY, 113, 33, 0)
+	GUICtrlSetOnEvent(-1,"RateSave")
+	Global $RateLabel1 = GUICtrlCreateLabel("", 0+$factorX, 0+$factorY, 332, 116)
+EndFunc   ;==>Rate_GUI
+
+Func RateOnHover($Control)
+	debug("test")
+	$Hover = True
+	For $i = 1 To 20
+		If $Hover Then
+			GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+		Else
+			GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+		EndIf
+		If $Control == $RateIcon[$i] Then $Hover = False
+	Next
+EndFunc
+
+Func RateOffHover($Control)
+	For $i = 1 To $CurrentRating
+		GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+	Next
+	For $i = $CurrentRating+1 To 20
+		GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+	Next
+EndFunc
+
+Func Rate_GUI()
 	$ItemSel = _GUICtrlListView_GetSelectedIndices($lieder, True)
 	If $ItemSel[0] == 0 Then
 		Error("No song selected!")
@@ -680,45 +725,42 @@ Func Rate_GUI()
 		Error("Song not in DB")
 		Return ""
 	EndIf
-	Global $RateIcon[22]
-	Global $RateGUI = XSkinGUICreate("PPlayer - Rate", 339+$factorX*2, 234+$factorY*2, $Skin_Folder,1,25,-1,-1,-1,$MainGUI)
-	$nr = 0
-	For $x = 8 To 296 Step 32
-		$nr += 1
-		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 120+$factorY, 32, 32, 0)
-		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
-	Next
-	For $x = 8 To 296 Step 32
-		$nr += 1
-		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 152+$factorY, 32, 32, 0)
-		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
-	Next
 	For $i = 1 To $Rating
 		GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
 	Next
 	For $i = $Rating+1 To 20
 		GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
 	Next
-	Global $RateButton1 = GUICtrlCreateButton("Save", 104+$factorX, 192+$factorY, 113, 33, 0)
-	Global $RateLabel1 = GUICtrlCreateLabel("", 0+$factorX, 0+$factorY, 332, 116)
+	Global $CurrentRating = $Rating
+	Global $CurrentRatingFile = $liste[$ItemSel[1]]
 	GUISetState(@SW_SHOW,$RateGUI)
-EndFunc   ;==>Rate_GUI
+EndFunc
+	
+Func RateClose()
+	GUISetState(@SW_Hide,$RateGUI)
+EndFunc
 
-Func RateOnHover($Control)
-	debug("test")
+Func RateSave()
+	_SQLite_Exec(-1, 'UPDATE Songs SET Rating = "' & $CurrentRating & '" WHERE Path = "' & $CurrentRatingFile & '";')
+	RateClose()
+EndFunc
+
+Func RateHelp()
+	ShellExecute("http://pplayer.wiki.sourceforge.net/Rating")
+EndFunc
+
+Func RateOnClick()
+	debug("RateOnClick")
 	$Hover = True
 	For $i = 1 To 20
-		If $Control == $RateIcon[$i] Then $Hover = False
 		If $Hover Then
 			GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+			$CurrentRating = $i
 		Else
 			GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
 		EndIf
+		If @GUI_CtrlId == $RateIcon[$i] Then $Hover = False
 	Next
-EndFunc
-
-Func RateOffHover($Control)
-	
 EndFunc
 
 #endregion
@@ -1592,7 +1634,7 @@ Func UpdateLabelPos($active_sound)
 		If StringLen($Save[$i]) = 1 Then $Save[$i] = "0" & $Save[$i]
 	Next
 	GUICtrlSetData($pos_label, $Save[3] & ":" & $Save[4] & "/" & $Save[1] & ":" & $Save[2])
-	GUICtrlSetData($Pos_Slider, Int($Pos))
+	If $SliderChange Then GUICtrlSetData($Pos_Slider, Int($Pos))
 EndFunc   ;==>UpdateLabelPos
 
 #endregion
@@ -1766,7 +1808,7 @@ Func Startup()
 	Global $uiTimer = DllCall("user32.dll", "uint", "SetTimer", "hwnd", 0, "uint", 0, "int", 10, "ptr", DllCallbackGetPtr($pTimerProc))
 	$uiTimer = $uiTimer[0]
 	Global $liste[1], $ActiveSongInfo[9], $ActiveSongSimilar[100], $DroppedFiles[1], $Playing = False, $check = 1, $oldstate = ""
-	Global $OldSkin = GetOpt("skin"), $dClicked = False, $SearchWait = False, $SongCapturedByPlugin = False, $Notify_WM = True, $hidden = False, $Pod_Notified = False, $Muted = False, $DB_Notified = False, $LeaveWhile = False, $Version_Notified = False, $Verified = False, $Verify_Notified = False, $Exit = False, $Restart = False
+	Global $OldSkin = GetOpt("skin"),$SliderChange = True, $dClicked = False, $SearchWait = False, $SongCapturedByPlugin = False, $Notify_WM = True, $hidden = False, $Pod_Notified = False, $Muted = False, $DB_Notified = False, $LeaveWhile = False, $Version_Notified = False, $Verified = False, $Verify_Notified = False, $Exit = False, $Restart = False
 	Global $StatListView1 = 0, $Changing = 0, $Searchview = 0, $SettingsSlider1Old = 0, $oldpos = 0, $active_sound = 0, $pObj = 0, $count = 0, $activelistid = -1, $oldlistid = 0, $SearchGUI = 0, $WM_DROPFILES = 0x233, $WM_List = 0x0111, $next_sound = 0
 	Global $hQuery, $sMsg
 	Global $factorY = _GetExtProperty($Skin_Folder & "\1.bmp", 28)
@@ -1939,6 +1981,7 @@ Func StartGUI()
 	GUICtrlSetLimit(-1, 1000, 0)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlSetBkColor(-1, "0x" & GetOpt("BkColor"))
+	GUICtrlSetOnHover($Pos_slider,"OnSliderHover","OnSliderHoverOff")
 	Global $Vol_Slider = GUICtrlCreateSlider(GIR("vol_slider", "left"), GIR("vol_slider", "top"), GIR("vol_slider", "width"), GIR("vol_slider", "height"))
 	GUICtrlSetLimit(-1, 100, 0)
 	GUICtrlSetData(-1, IniRead("db\settings.ini", "Infos", "Vol", 100))
@@ -1949,6 +1992,14 @@ Func StartGUI()
 	GUICtrlSetOnEvent(-1, "MuteVol")
 	GUICtrlSetImage(-1, $PP_IcoFolder, 10)
 EndFunc   ;==>StartGUI
+
+Func OnSliderHover($Control)
+	$SliderChange = False
+EndFunc
+
+Func OnSliderHoverOff($Control)
+	$SliderChange = True
+EndFunc
 
 Func CreateGUIIni($GUI)
 	$GF = StringSplit(FileRead($GUI), @CRLF)
@@ -2250,7 +2301,6 @@ EndFunc
 ;CallBack function to handle the hovering process
 Func CALLBACKPROC($hWnd, $uiMsg, $idEvent, $dwTime)
 	If UBound($HOVER_CONTROLS_ARRAY)-1 < 1 Then Return
-	debug("testing")
 	Local $ControlGetHovered = _ControlGetHovered()
 	Local $sCheck_LHE = $LAST_HOVERED_ELEMENT[1]
 	
