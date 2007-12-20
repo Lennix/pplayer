@@ -268,7 +268,7 @@ Func Playing($id, $DND = False)
 		SongHeard($tag, $Dur)
 	Else
 		PluginTrigger("SongRatingDecreased", $id, $tag)
-		Rate($liste[$id], "-1")
+		Rate($liste[$oldlistid], "-1")
 	EndIf
 	If GUICtrlRead($ModeCheck[2]) <> "Repeat"  And Not $LeaveWhile Then $activelistid += 1
 	PluginTrigger("SongPlayed", $id, $tag)
@@ -652,36 +652,19 @@ EndFunc   ;==>BuildGUIs
 #region -> Rate
 
 Func RateBuild()
-	#cs
-	$ItemSel = _GUICtrlListView_GetSelectedIndices($lieder, True)
-	If $ItemSel[0] == 0 Then
-		Error("No song selected!")
-		Return ""
-	Else
-		$Rating = InputBox("PPlayer - Rating", "How should I change the rating?" & @CRLF & StringTrimLeft($liste[$ItemSel[1]], StringInStr($liste[$ItemSel[1]], "\", 0, -1)) & @CRLF & @CRLF & "Ex: '2' or '-6'")
-		If @error Then Return ""
-	EndIf
-	$rate = Int($Rating)
-	If $rate <> 0 Then
-		Rate($liste[$ItemSel[1]], $rate)
-		Info("Rating successfully altered " & $rate)
-	Else
-		Error("Invalid Rating")
-	EndIf
-	#ce
 	Global $RateIcon[22]
 	Global $RateGUI = XSkinGUICreate("PPlayer - Rate", 339+$factorX*2, 197+$factorY*2, $Skin_Folder,1,25,-1,-1,-1,$MainGUI)
 	XSkinIcon($RateGUI,3,StringSplit("RateClose|RateClose|RateHelp","|"))
 	$nr = 0
 	For $x = 8 To 296 Step 32
 		$nr += 1
-		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 88+$factorY, 32, 32)
+		$RateIcon[$nr] = GUICtrlCreateIcon($PP_IcoFolder,12, $x+$factorX, 88+$factorY, 32, 32)
 		GUICtrlSetOnEvent(-1,"RateOnClick")
 		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
 	Next
 	For $x = 8 To 296 Step 32
 		$nr += 1
-		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 120+$factorY, 32, 32)
+		$RateIcon[$nr] = GUICtrlCreateIcon($PP_IcoFolder,12, $x+$factorX, 120+$factorY, 32, 32)
 		GUICtrlSetOnEvent(-1,"RateOnClick")
 		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
 	Next
@@ -691,13 +674,12 @@ Func RateBuild()
 EndFunc   ;==>Rate_GUI
 
 Func RateOnHover($Control)
-	debug("test")
 	$Hover = True
 	For $i = 1 To 20
 		If $Hover Then
-			GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+			GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,12)
 		Else
-			GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+			GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,13)
 		EndIf
 		If $Control == $RateIcon[$i] Then $Hover = False
 	Next
@@ -705,10 +687,10 @@ EndFunc
 
 Func RateOffHover($Control)
 	For $i = 1 To $CurrentRating
-		GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+		GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,12)
 	Next
 	For $i = $CurrentRating+1 To 20
-		GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+		GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,13)
 	Next
 EndFunc
 
@@ -726,10 +708,10 @@ Func Rate_GUI()
 		Return ""
 	EndIf
 	For $i = 1 To $Rating
-		GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+		GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,12)
 	Next
 	For $i = $Rating+1 To 20
-		GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+		GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,13)
 	Next
 	Global $CurrentRating = $Rating
 	Global $CurrentRatingFile = $liste[$ItemSel[1]]
@@ -751,14 +733,13 @@ Func RateHelp()
 EndFunc
 
 Func RateOnClick()
-	debug("RateOnClick")
 	$Hover = True
 	For $i = 1 To 20
 		If $Hover Then
-			GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+			GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,12)
 			$CurrentRating = $i
 		Else
-			GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+			GUICtrlSetImage($RateIcon[$i],$PP_IcoFolder,13)
 		EndIf
 		If @GUI_CtrlId == $RateIcon[$i] Then $Hover = False
 	Next
@@ -1933,6 +1914,8 @@ Func StartGUI()
 	GUICtrlSetOnEvent(-1, "AddWithDialog")
 	GUICtrlCreateMenuItem("Delete",$CM )
 	GUICtrlSetOnEvent(-1, "DelFromList")
+	GUICtrlCreateMenuItem("Rate",$CM )
+	GUICtrlSetOnEvent(-1, "Rate_GUI")
 	Global $pause_button = GUICtrlCreateIcon($PP_IcoFolder, 7, GIR("play", "left"), GIR("play", "top"), GIR("play", "width"), GIR("play", "height"))
 	GUICtrlSetOnEvent(-1, "Pause")
 	GUICtrlCreateIcon($PP_IcoFolder, 11, GIR("stop", "left"), GIR("stop", "top"), GIR("stop", "width"), GIR("stop", "height"))
@@ -2265,6 +2248,8 @@ Func DelFromList()
 		_GUICtrlListView_DeleteItemsSelected($lieder)
 		If $PlayNext Then
 			NextInList()
+		ElseIf UBound($liste) == 1 Then
+			Stop()
 		Else
 			Focus($activelistid)
 		EndIf
