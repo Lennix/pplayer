@@ -651,6 +651,7 @@ EndFunc   ;==>BuildGUIs
 #region -> Rate
 
 Func Rate_GUI()
+	#cs
 	$ItemSel = _GUICtrlListView_GetSelectedIndices($lieder, True)
 	If $ItemSel[0] == 0 Then
 		Error("No song selected!")
@@ -666,7 +667,59 @@ Func Rate_GUI()
 	Else
 		Error("Invalid Rating")
 	EndIf
+	#ce
+	$ItemSel = _GUICtrlListView_GetSelectedIndices($lieder, True)
+	If $ItemSel[0] == 0 Then
+		Error("No song selected!")
+		Return ""
+	EndIf
+	$tag = QueryDB($liste[$ItemSel[1]])
+	If Not @Error Then
+		$Rating = $tag[8]
+	Else
+		Error("Song not in DB")
+		Return ""
+	EndIf
+	Global $RateIcon[22]
+	Global $RateGUI = XSkinGUICreate("PPlayer - Rate", 339+$factorX*2, 234+$factorY*2, $Skin_Folder,1,25,-1,-1,-1,$MainGUI)
+	$nr = 0
+	For $x = 8 To 296 Step 32
+		$nr += 1
+		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 120+$factorY, 32, 32, 0)
+		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
+	Next
+	For $x = 8 To 296 Step 32
+		$nr += 1
+		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 152+$factorY, 32, 32, 0)
+		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
+	Next
+	For $i = 1 To $Rating
+		GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+	Next
+	For $i = $Rating+1 To 20
+		GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+	Next
+	Global $RateButton1 = GUICtrlCreateButton("Save", 104+$factorX, 192+$factorY, 113, 33, 0)
+	Global $RateLabel1 = GUICtrlCreateLabel("", 0+$factorX, 0+$factorY, 332, 116)
+	GUISetState(@SW_SHOW,$RateGUI)
 EndFunc   ;==>Rate_GUI
+
+Func RateOnHover($Control)
+	debug("test")
+	$Hover = True
+	For $i = 1 To 20
+		If $Control == $RateIcon[$i] Then $Hover = False
+		If $Hover Then
+			GUICtrlSetImage($RateIcon[$i],"resource\hovered.ico")
+		Else
+			GUICtrlSetImage($RateIcon[$i],"resource\unhovered.ico")
+		EndIf
+	Next
+EndFunc
+
+Func RateOffHover($Control)
+	
+EndFunc
 
 #endregion
 #region -> Settings
@@ -1706,6 +1759,12 @@ Func Startup()
 	Global Const $LVM_SETITEM = ($LVM_FIRST + 6)
 	Global Const $LVIF_NORECOMPUTE = 0x0800
 	Global $Delimiters = '|-|'
+	Global $HOVER_CONTROLS_ARRAY[1][1]
+	Global $LAST_HOVERED_ELEMENT[2] = [-1, -1]
+	Global $LAST_HOVERED_ELEMENT_MARK = -1
+	Global $pTimerProc = DllCallbackRegister("CALLBACKPROC", "none", "hwnd;uint;uint;dword")
+	Global $uiTimer = DllCall("user32.dll", "uint", "SetTimer", "hwnd", 0, "uint", 0, "int", 10, "ptr", DllCallbackGetPtr($pTimerProc))
+	$uiTimer = $uiTimer[0]
 	Global $liste[1], $ActiveSongInfo[9], $ActiveSongSimilar[100], $DroppedFiles[1], $Playing = False, $check = 1, $oldstate = ""
 	Global $OldSkin = GetOpt("skin"), $dClicked = False, $SearchWait = False, $SongCapturedByPlugin = False, $Notify_WM = True, $hidden = False, $Pod_Notified = False, $Muted = False, $DB_Notified = False, $LeaveWhile = False, $Version_Notified = False, $Verified = False, $Verify_Notified = False, $Exit = False, $Restart = False
 	Global $StatListView1 = 0, $Changing = 0, $Searchview = 0, $SettingsSlider1Old = 0, $oldpos = 0, $active_sound = 0, $pObj = 0, $count = 0, $activelistid = -1, $oldlistid = 0, $SearchGUI = 0, $WM_DROPFILES = 0x233, $WM_List = 0x0111, $next_sound = 0
@@ -1943,6 +2002,8 @@ Func logoff()
 		_SQLite_QueryFinalize($hQuery)
 		_SQLite_Close()
 		_SQLite_Shutdown()
+		DllCallbackFree($pTimerProc)
+		DllCall("user32.dll", "int", "KillTimer", "hwnd", 0, "uint", $uiTimer)
 		$Pos = WinGetPos($Title)
 		If Not @error Then
 			_IniWrite("db\settings.ini", "window", "x", $Pos[0])
@@ -2176,6 +2237,55 @@ EndFunc   ;==>UpdateList
 #endregion
 
 #region UDFs
+
+Func GUICtrlSetOnHover($CtrlID, $HoverFuncName, $LeaveHoverFuncName=-1)
+	Local $Ubound = UBound($HOVER_CONTROLS_ARRAY)
+	ReDim $HOVER_CONTROLS_ARRAY[$Ubound+1][3]
+	$HOVER_CONTROLS_ARRAY[$Ubound][0] = GUICtrlGetHandle($CtrlID)
+	$HOVER_CONTROLS_ARRAY[$Ubound][1] = $HoverFuncName
+	$HOVER_CONTROLS_ARRAY[$Ubound][2] = $LeaveHoverFuncName
+	$HOVER_CONTROLS_ARRAY[0][0] = $Ubound
+EndFunc
+
+;CallBack function to handle the hovering process
+Func CALLBACKPROC($hWnd, $uiMsg, $idEvent, $dwTime)
+	If UBound($HOVER_CONTROLS_ARRAY)-1 < 1 Then Return
+	Local $ControlGetHovered = _ControlGetHovered()
+	Local $sCheck_LHE = $LAST_HOVERED_ELEMENT[1]
+	
+	If $ControlGetHovered = 0 Or ($sCheck_LHE <> -1 And $ControlGetHovered <> $sCheck_LHE) Then
+		If $LAST_HOVERED_ELEMENT_MARK = -1 Then Return
+		If $LAST_HOVERED_ELEMENT[0] <> -1 Then Call($LAST_HOVERED_ELEMENT[0], $LAST_HOVERED_ELEMENT[1])
+		$LAST_HOVERED_ELEMENT[0] = -1
+		$LAST_HOVERED_ELEMENT[1] = -1
+		$LAST_HOVERED_ELEMENT_MARK = -1
+	Else
+		For $i = 1 To $HOVER_CONTROLS_ARRAY[0][0]
+			If $HOVER_CONTROLS_ARRAY[$i][0] = GUICtrlGetHandle($ControlGetHovered) Then
+				If $LAST_HOVERED_ELEMENT_MARK = $HOVER_CONTROLS_ARRAY[$i][0] Then ExitLoop
+				$LAST_HOVERED_ELEMENT_MARK = $HOVER_CONTROLS_ARRAY[$i][0]
+				Call($HOVER_CONTROLS_ARRAY[$i][1], $ControlGetHovered)
+				If $HOVER_CONTROLS_ARRAY[$i][2] <> -1 Then
+					$LAST_HOVERED_ELEMENT[0] = $HOVER_CONTROLS_ARRAY[$i][2]
+					$LAST_HOVERED_ELEMENT[1] = $ControlGetHovered
+				EndIf
+				ExitLoop
+			EndIf
+		Next
+	EndIf
+EndFunc
+
+;Thanks to amel27 for that one!!!
+Func _ControlGetHovered()
+	Local $Old_Opt_MCM = Opt("MouseCoordMode", 1)
+	Local $iRet = DllCall("user32.dll", "int", "WindowFromPoint", _
+		"long", MouseGetPos(0), _
+		"long", MouseGetPos(1))
+	$iRet = DllCall("user32.dll", "int", "GetDlgCtrlID", "hwnd", $iRet[0])
+	Opt("MouseCoordMode", $Old_Opt_MCM)
+	Return $iRet[0]
+EndFunc
+
 Func _TimeGetStamp()
 	Local $av_Time
 	$av_Time = DllCall('CrtDll.dll', "long", 'time')
