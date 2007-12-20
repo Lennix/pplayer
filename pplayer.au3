@@ -670,24 +670,24 @@ Func RateBuild()
 	EndIf
 	#ce
 	Global $RateIcon[22]
-	Global $RateGUI = XSkinGUICreate("PPlayer - Rate", 339+$factorX*2, 234+$factorY*2, $Skin_Folder,1,25,-1,-1,-1,$MainGUI)
+	Global $RateGUI = XSkinGUICreate("PPlayer - Rate", 339+$factorX*2, 197+$factorY*2, $Skin_Folder,1,25,-1,-1,-1,$MainGUI)
 	XSkinIcon($RateGUI,3,StringSplit("RateClose|RateClose|RateHelp","|"))
 	$nr = 0
+	For $x = 8 To 296 Step 32
+		$nr += 1
+		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 88+$factorY, 32, 32)
+		GUICtrlSetOnEvent(-1,"RateOnClick")
+		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
+	Next
 	For $x = 8 To 296 Step 32
 		$nr += 1
 		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 120+$factorY, 32, 32)
 		GUICtrlSetOnEvent(-1,"RateOnClick")
 		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
 	Next
-	For $x = 8 To 296 Step 32
-		$nr += 1
-		$RateIcon[$nr] = GUICtrlCreateIcon("resource\hovered.ico",-1, $x+$factorX, 152+$factorY, 32, 32)
-		GUICtrlSetOnEvent(-1,"RateOnClick")
-		GUICtrlSetOnHover($RateIcon[$nr],"RateOnHover","RateOffHover")
-	Next
-	Global $RateButton1 = GUICtrlCreateButton("Save", 104+$factorX, 192+$factorY, 113, 33, 0)
+	Global $RateButton1 = GUICtrlCreateButton("Save", 104+$factorX, 160+$factorY, 113, 33, 0)
 	GUICtrlSetOnEvent(-1,"RateSave")
-	Global $RateLabel1 = GUICtrlCreateLabel("", 0+$factorX, 0+$factorY, 332, 116)
+	Global $RateLabel1 = GUICtrlCreateLabel("", 8+$factorX, 8+$factorY, 316, 76)
 EndFunc   ;==>Rate_GUI
 
 Func RateOnHover($Control)
@@ -733,6 +733,7 @@ Func Rate_GUI()
 	Next
 	Global $CurrentRating = $Rating
 	Global $CurrentRatingFile = $liste[$ItemSel[1]]
+	GUICtrlSetData($RateLabel1,"Artist: " & @tab & @tab & $tag[1] & @CRLF & "Album: " & @tab & @tab & $tag[2] & @CRLF & "Track: " & @tab & @tab & $tag[3] & @CRLF & "Current rating: " & @tab & $tag[8])
 	GUISetState(@SW_SHOW,$RateGUI)
 EndFunc
 	
