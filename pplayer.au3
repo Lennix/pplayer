@@ -2250,6 +2250,7 @@ EndFunc
 ;CallBack function to handle the hovering process
 Func CALLBACKPROC($hWnd, $uiMsg, $idEvent, $dwTime)
 	If UBound($HOVER_CONTROLS_ARRAY)-1 < 1 Then Return
+	debug("testing")
 	Local $ControlGetHovered = _ControlGetHovered()
 	Local $sCheck_LHE = $LAST_HOVERED_ELEMENT[1]
 	
