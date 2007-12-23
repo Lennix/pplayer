@@ -42,24 +42,11 @@ Opt("TrayMenuMode",1)
 
 Global $hQuery, $aRow, $sMsg, $Create = False,$hidden = False,$Update = False,$Working = False,$Get = False,$Error = False
 
-If Not @Compiled Then
-	$Debug = True
-	Global $PP_DIR = "C:\Dokumente und Einstellungen\Administrator\Eigene Dateien\AutoIt\Player\develop\"
-	If @UserName = "Besitzer" Then $PP_DIR = "C:\Dokumente und Einstellungen\Besitzer\Eigene Dateien\develop\"
-Else
-	Global $PP_Dir = RegRead("HKEY_CURRENT_USER\Software\PPlayer", "DIR")
-	If StringLen($PP_Dir) == 0 Then
-		$PP_Dir = RegRead("HKEY_CURRENT_USER\Software\PascalPlayer", "DIR")
-		If StringLen($PP_Dir) == 0 Then $PP_Dir = @WorkingDir
-		RegWrite("HKEY_CURRENT_USER\Software\PPlayer","DIR","REG_SZ",$PP_Dir)
-	EndIf
-	If StringRight($PP_Dir,1) == "\" Then
-		
-	Else
-		$PP_Dir &= "\"
-	EndIf
-EndIf
+Global $PP_Dir = @ScriptDir & "\..\"
+If Not @Compiled Then $PP_Dir = @ScriptDir & "\"
 FileChangeDir($PP_Dir)
+
+debug($PP_Dir)
 
 Global $dbversion = "0.9"
 
@@ -409,3 +396,8 @@ EndFunc
 Func Info($Text, $Extra = 0)
 	Return MsgBox(64 + $Extra, "PPlayer -- Info", $Text)
 EndFunc   ;==>Info
+
+Func debug($String)
+	ConsoleWrite(@CRLF & ">Debug: " & $String)
+	Return $String
+EndFunc   ;==>debug
