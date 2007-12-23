@@ -68,7 +68,10 @@ Dim $GlobalHeader, $GlobalCorners, $Globalcolor, $CtrlButton[1][4]
 Dim $StopFirst = True
 If $XS_debug Then Opt("TrayIconDebug", 1)
 Func XSkinGUICreate($XS_guiTitle, $XS_width, $XS_height,$Skin_Folder, $guiHeader = 1, $guiCorners = 25,$x = -1,$y = -1,$Style = -1,$Ref = -1)
-	If Not FileExists($Skin_Folder) Then XSkinError("The $Skin_Folder was not found")
+	If Not FileExists($Skin_Folder) Then 
+		If FileExists($PP_Dir & "Skins\Carbon") Then Return XSkinGUICreate($XS_guiTitle,$XS_width,$XS_height,$PP_Dir & "Skins\Carbon",$guiHeader,$guiCorners,$x,$y,$Style,$Ref)
+		XSkinError("The $Skin_Folder was not found")
+	EndIf
 	$GlobalCorners = $guiCorners
 	$GlobalHeader = $guiHeader
 	$bkg_color = IniRead($Skin_Folder & "\Skin.dat", "color", "background", 0xD9F6FF)
