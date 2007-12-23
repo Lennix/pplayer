@@ -139,6 +139,46 @@ Done:
 PPlayer:
 
 => 0.9.5:
+Mayor changes:
+- PluginSystem introduced:
+* The PluginSystem shares the plugins available for PPlayer
+* It comes with a tab in the settings containing a list of Plugins available
+* You can enable/disable plugins, get information on them at this place
+- New Plugin: MiniPPlayer written by i542
+* Small plugin which shows name of song and play/pause controls
+- New Plugin: BugReport
+* Plugin to report Bugs and/or request new features and plugins
+- Stream plugin reviped:
+* New GUI with a list containing every stream
+* Engine improved now playing many more streams (everyone you could play with WMP and some more)
+- Playlist improvements:
+* Closing PPlayer will now save the current Playlist
+* On Startup your old list will be restored and the play started on old position
+* Note: This feature is disabled on default
+* Its now possible to drag folders on the Playlist
+* The songs on the playlist got some new items in the contextmenu
+- Settingsimprovement:
+* There are more settings available for "PlayMode"
+* More settings for "General" will follow in next releases
+* One new setting: AutoSearch Excludement
+-> The user can exclude tags from the AutoSearch (for example "live" - no song with "live" in it will be added)
+- Improved Rating:
+* Clicking on the Star next to the playlist will open a window containing 20 stars
+* To change the rating the user just clicks on one of the stars
+* A small label informs the user which song he's rating
+- Small changes:
+* PPlayer will now start after creating the database on first run
+* The songinfoload is now much faster due to a new system
+* Covers will only be downloaded if they do not exist in the musicfolder
+* Crashsystem: After a crash of PPlayer the user will be introduced what to do
+- Bugfixes:
+* The problem with the slider is finally fixed
+* Many crashes on uncommon events were fixed
+* Focusing on the playlist was fixed
+* "Skindatabase not responding" while rating a skin fixed
+* Deleting many items on PlayList causing PPlayer to crash fixed
+* and many many more
+
 - Fixed:
 => Typo (databse) -> oT
 => Crash on Rate -> oT
