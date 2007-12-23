@@ -104,10 +104,17 @@ EndIf
 
 Global $Begin = TimerInit()
 #region Opts
-Global $version = "0.9.5 RC3"
+Global $version = "0.9.5 RC4"
+Global $releasetimestamp = 1198445371
 Global $dbversion = "0.9"
 Global $backup = True
 
+If LoadSetting("infos","version","0.9.4") <> $version Then
+	SaveSetting("infos","version",$version)
+Else
+	If $releasetimestamp + 2592000 < _TimeGetStamp() And Info("The support of your version of PPlayer expired. That means its possible that many problems occur due to the Backend is always changed. You might download the latest version of PPlayer to get the recent changes. Do you want to download the latest version?",$MsgBox_YesNo) == $MSGBox_Yes Then DownloadPPlayer()
+EndIf
+	
 If Not @Compiled Then
 	If $backup Then
 		$file = "backup\pplayer-" & $version & "-" & @MDAY & @MON & @YEAR & @HOUR & @MIN & @SEC & ".au3"
