@@ -17,6 +17,7 @@ EndFunc   ;==>MiniPPlayer_OnPluginLoad
 Func MiniPPlayer_CreateCustomGUI()
 	Global $MiniPPlayerGui = GUICreate("PPlayer Mini Mode", 360, 47, 193, 125, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_TOPMOST, $WS_EX_WINDOWEDGE))
 	GUISetBkColor(0xA6CAF0)
+	GUISetOnEvent($GUI_EVENT_CLOSE,"MiniPPlayer_Close")
 	Global $MiniPPlayerLabel1 = GUICtrlCreateLabel("", 3, 5, 297, 23)
 	GUICtrlSetFont(-1, 12, 800, 0, "Arial")
 	Global $MiniPPlayerLabel2 = GUICtrlCreateLabel("", 3, 26, 235, 17)
@@ -26,6 +27,10 @@ Func MiniPPlayer_CreateCustomGUI()
 	GUISetState(@SW_SHOW)
 	WinSetTrans("PPlayer Mini Mode", "", 225)
 EndFunc   ;==>MiniPPlayer_CreateCustomGUI
+
+Func MiniPPlayer_Close()
+	GUISetState(@SW_HIDE,$MiniPPlayerGui)
+EndFunc
 
 Func MiniPPlayer_SongInformationLoaded($id, $songinfo)
 	GUICtrlSetData($MiniPPlayerLabel1, $songinfo[3])
