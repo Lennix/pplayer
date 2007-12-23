@@ -59,7 +59,11 @@ EndIf
 
 If LoadSetting("infos", "crash", 0) == 1 Then
 	$Form2 = GUICreate("PPlayer - Crashsystem", 413, 298, 273, 186)
-	$Label1 = GUICtrlCreateLabel("PPlayer crashed... If this happened more than one time now you might consider downloading the latest version to make sure its a new bug." & @CRLF & "If you already download the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer.", 0, 0, 412, 201)
+	$Label1 = GUICtrlCreateLabel( _
+	"A problem occured crashing PPlayer." & @CRLF & _
+	"If this happened more than once you might consider downloading the latest version. This should fix the problem." & @CRLF & _
+	"If you already downloaded the latest version you might consider submitting the problem you're confrontated with to help the development of PPlayer." & @CRLF & _
+	"Choose an option below for further action", 8, 8, 404, 193)
 	$Combo1 = GUICtrlCreateCombo("", 8, 208, 290, 25)
 	GUICtrlSetData(-1,"Submit BugReport|Download Installer|Reset Windowpositions|Disable Plugins")
 	$Button1 = GUICtrlCreateButton("Run", 312, 208, 97, 25)
@@ -81,7 +85,10 @@ If LoadSetting("infos", "crash", 0) == 1 Then
 					Case "Reset Windowpositions"
 						IniDelete("db\settings.ini","window")
 					Case "Disable Plugins"
-						FileClose(FileOpen("Plugins\Plugins.au3",1))						
+						FileDelete("Plugins\Plugins.au3")
+						FileClose(FileOpen("Plugins\Plugins.au3",1))
+						Run("pplayer.exe")
+						Exit 0
 				EndSwitch
 			Case $Button2
 				ExitLoop
@@ -122,6 +129,21 @@ Opt("TrayMenuMode", 1)
 Global $PP_HP = "http://pplayer.sourceforge.net/access/"
 
 Folders()
+; Analysing Plugins
+$plugininput = FileRead("Plugins\Plugins.au3")
+$sec = IniReadSection("db\settings.ini","Pluginact")
+If Not @Error Then
+	For $i = 1 To $sec[0][0]
+		If $sec[$i][1] == True And Not StringInStr($plugininput,$Sec[$i][0]) Then SaveSetting("Pluginact",$sec[$i][0],False)
+	Next
+EndIf
+$input = StringSplit($plugininput,@CRLF)
+If Not @Error Then
+	For $i = 1 To $input[0]
+		$plugininput = _StringBetween($Input[$i],'"',"\")
+		If Not @Error Then SaveSetting("Pluginact",$plugininput[0],True)
+	Next
+EndIf
 
 Global $Plugins[1]
 Global $PluginMenus[1][2]
@@ -260,6 +282,8 @@ Func Playing($id, $DND = False)
 		PluginTrigger("NextSongNotAvailable")
 		WMStop()
 		GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
+		GUICtrlSetState($ShowAlbum, $GUI_HIDE)
+		UpdateLabelInfo(StringSplit("||||||-1|", "|"), StringSplit("|", "|"))
 		WebAnnounce()
 	EndIf
 	If $Pos > $Dur * (LoadSetting("settings","ratetime",90)/100) Then
@@ -1786,9 +1810,9 @@ Func Startup()
 	Global $HOVER_CONTROLS_ARRAY[1][1]
 	Global $LAST_HOVERED_ELEMENT[2] = [-1, -1]
 	Global $LAST_HOVERED_ELEMENT_MARK = -1
-	Global $pTimerProc = DllCallbackRegister("CALLBACKPROC", "none", "hwnd;uint;uint;dword")
-	Global $uiTimer = DllCall("user32.dll", "uint", "SetTimer", "hwnd", 0, "uint", 0, "int", 10, "ptr", DllCallbackGetPtr($pTimerProc))
-	$uiTimer = $uiTimer[0]
+	;Global $pTimerProc = DllCallbackRegister("CALLBACKPROC", "none", "hwnd;uint;uint;dword")
+	;Global $uiTimer = DllCall("user32.dll", "uint", "SetTimer", "hwnd", 0, "uint", 0, "int", 10, "ptr", DllCallbackGetPtr($pTimerProc))
+	;$uiTimer = $uiTimer[0]
 	Global $liste[1], $ActiveSongInfo[9], $ActiveSongSimilar[100], $DroppedFiles[1], $Playing = False, $check = 1, $oldstate = ""
 	Global $OldSkin = GetOpt("skin"),$SliderChange = True, $dClicked = False, $SearchWait = False, $SongCapturedByPlugin = False, $Notify_WM = True, $hidden = False, $Pod_Notified = False, $Muted = False, $DB_Notified = False, $LeaveWhile = False, $Version_Notified = False, $Verified = False, $Verify_Notified = False, $Exit = False, $Restart = False
 	Global $StatListView1 = 0, $Changing = 0, $Searchview = 0, $SettingsSlider1Old = 0, $oldpos = 0, $active_sound = 0, $pObj = 0, $count = 0, $activelistid = -1, $oldlistid = 0, $SearchGUI = 0, $WM_DROPFILES = 0x233, $WM_List = 0x0111, $next_sound = 0
@@ -2037,8 +2061,8 @@ Func logoff()
 		_SQLite_QueryFinalize($hQuery)
 		_SQLite_Close()
 		_SQLite_Shutdown()
-		DllCallbackFree($pTimerProc)
-		DllCall("user32.dll", "int", "KillTimer", "hwnd", 0, "uint", $uiTimer)
+		;DllCallbackFree($pTimerProc)
+		;DllCall("user32.dll", "int", "KillTimer", "hwnd", 0, "uint", $uiTimer)
 		$Pos = WinGetPos($Title)
 		If Not @error Then
 			_IniWrite("db\settings.ini", "window", "x", $Pos[0])
@@ -2160,7 +2184,7 @@ EndFunc   ;==>CheckUDP
 
 Func AddWithDialog()
 	$check = 0
-	$file = FileOpenDialog("Choose Song to add", IniRead("db\settings.ini", "infos", "lastdir", ""), "PP Media Files (*.mp3;*.wma;*.ogg)|All (*.*)", 5)
+	$file = FileOpenDialog("Choose Song to add", IniRead("db\settings.ini", "infos", "lastdir", ""), "PPlayer Media Files (*.mp3;*.wma;*.ogg)|All (*.*)", 5)
 	FileChangeDir($PP_Dir)
 	If StringLen($file) > 0 Then
 		If StringInStr($file, "|") > 0 Then
