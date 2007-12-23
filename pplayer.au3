@@ -1810,9 +1810,9 @@ Func Startup()
 	Global $HOVER_CONTROLS_ARRAY[1][1]
 	Global $LAST_HOVERED_ELEMENT[2] = [-1, -1]
 	Global $LAST_HOVERED_ELEMENT_MARK = -1
-	;Global $pTimerProc = DllCallbackRegister("CALLBACKPROC", "none", "hwnd;uint;uint;dword")
-	;Global $uiTimer = DllCall("user32.dll", "uint", "SetTimer", "hwnd", 0, "uint", 0, "int", 10, "ptr", DllCallbackGetPtr($pTimerProc))
-	;$uiTimer = $uiTimer[0]
+	Global $pTimerProc = DllCallbackRegister("CALLBACKPROC", "none", "hwnd;uint;uint;dword")
+	Global $uiTimer = DllCall("user32.dll", "uint", "SetTimer", "hwnd", 0, "uint", 0, "int", 10, "ptr", DllCallbackGetPtr($pTimerProc))
+	$uiTimer = $uiTimer[0]
 	Global $liste[1], $ActiveSongInfo[9], $ActiveSongSimilar[100], $DroppedFiles[1], $Playing = False, $check = 1, $oldstate = ""
 	Global $OldSkin = GetOpt("skin"),$SliderChange = True, $dClicked = False, $SearchWait = False, $SongCapturedByPlugin = False, $Notify_WM = True, $hidden = False, $Pod_Notified = False, $Muted = False, $DB_Notified = False, $LeaveWhile = False, $Version_Notified = False, $Verified = False, $Verify_Notified = False, $Exit = False, $Restart = False
 	Global $StatListView1 = 0, $Changing = 0, $Searchview = 0, $SettingsSlider1Old = 0, $oldpos = 0, $active_sound = 0, $pObj = 0, $count = 0, $activelistid = -1, $oldlistid = 0, $SearchGUI = 0, $WM_DROPFILES = 0x233, $WM_List = 0x0111, $next_sound = 0
@@ -2061,8 +2061,8 @@ Func logoff()
 		_SQLite_QueryFinalize($hQuery)
 		_SQLite_Close()
 		_SQLite_Shutdown()
-		;DllCallbackFree($pTimerProc)
-		;DllCall("user32.dll", "int", "KillTimer", "hwnd", 0, "uint", $uiTimer)
+		DllCallbackFree($pTimerProc)
+		DllCall("user32.dll", "int", "KillTimer", "hwnd", 0, "uint", $uiTimer)
 		$Pos = WinGetPos($Title)
 		If Not @error Then
 			_IniWrite("db\settings.ini", "window", "x", $Pos[0])
