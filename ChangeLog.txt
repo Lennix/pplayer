@@ -19,13 +19,6 @@ ToDo:
 
 Offline: Skins!! (Installer)
 
-- 0.9.*:
-* Reviped Transfer:
-=> Uses sets a external folder
-=> PPlayer analyses the external folder
-=> PPlayer analyses the statistic
-=> PPlayer copies and deletes files on/to the external folder matching some parameters
-
 * Icons:
 => Icons are downloadable like skins and chooseable on the Generaltab in the settings
 => Changing icons is possible on runtime
@@ -39,27 +32,31 @@ Offline: Skins!! (Installer)
 => Lyrics -> Done
 => Podcast -> Done
 => Debugger -> Done
-=> Stream -> Events created
+=> Stream -> Done
 => GoogleVideo (GUI with window/saving url and name for database)
-=> Updater (Cutting AutoUpdate out of PPlayer) -> Done (Mit Plugins: ob man check oder update drückt ist das gleiche...)
-=> BugReport
+=> Updater (Cutting AutoUpdate out of PPlayer) -> Done
+=> BugReport -> Done
+=> PureVideo
 
 * Global Statistic
 => Gathers infos of the database and creates a TOP 10 (might be difficult)
 => Suche nach nutzern mit gewissem Musikgeschmack
 
 * Settings:
-=> Add a setting to PlayMode-TAB for choosing tracks (via keyword) that should not be choose by autosearch
-
-- Settings:
-=> ToDo: Mehr settings (already done)
----> Mit 0.8.4.5 verbessert
+=> PPlayer im Trayicon hiden oder nicht (als setting)
+---> Mit 0.9.5RC3 verbessert
 
 - Transfer:
 -> Transfer vielleicht mit der Funktion des Players intelligent Musik zu suchen.
 => Durchführbar mit Statistik
 ==> Lieblingslieder werden übertragen
 -> Auto-Drivesearch (a-z removeable)
+- 0.9.*:
+* Reviped Transfer:
+=> User sets a external folder
+=> PPlayer analyses the external folder
+=> PPlayer analyses the statistic
+=> PPlayer copies and deletes files on/to the external folder matching some parameters
 ---> Inaktiv
 
 - Playmode:
@@ -68,15 +65,13 @@ Offline: Skins!! (Installer)
 => Lieder unlocken Wenn Album leer dann Band wenn dann leer dann similar bands
 -> SetNext und Research vereinigen
 -> wenn setnext fehlschl?gt soll das letzte lied versucht werden usw.
-
 ==> Search should always return a song
-
--> outqueue soll übersprungene lieder beachten! Inqueue sollte lieder lieder unterhalb des liedes führen (vllt statt queue eine echtzeitabfrage)
+-> outqueue soll übersprungene lieder beachten! Inqueue sollte lieder unterhalb des liedes führen (vllt statt queue eine echtzeitabfrage)
 ---> Mit 0.8.4 verbessert
 
 - PodCast:
--> Download von Play trennen
----> Mit 0.8.1 verbessert
+-> Download von Play trennen (Done als plugin)
+---> Mit 0.9.5RC2 verbessert
 
 - Datenbank:
 ---> Mit 0.9 verbessert
@@ -89,22 +84,21 @@ Sachen fürs Designupdate:
 - Alle GUI's mit XSkin und mit kxf-Datei -> ~Done - Every GUI with kxf useless
 - XSkin Global setzen und kxf-Datei pro GUI => Done
 
--> GUI in MiniMode (done with trayicon...) -> Would be nice (difficult - rewrite of many things needed)
+-> GUI in MiniMode (done with trayicon...) -> Would be nice (difficult - rewrite of many things needed) -> Done via Plugins
 -> Helpbuttons überall (erstmal GUI's) -> "?" on WinTitle
--> Button auf HauptGUI fürs Slide in vom Playmode
--> Mitwirkende als auf GUI
-
+-> Button auf HauptGUI fürs Slide-in vom Playmode (Nett...)
+-> Mitwirkende auf GUI
 -> Multilanguage via Languagefile, 
 => übersetzbar von google -> nicht umsetzbar -> brauche übersetzer
 => Langsam wichtiger
 
 => SkinSystem:
 - Skins mit Rating (Rating vom User) (in Info anzeigen)
-
 ---> Mit 0.9 verbessert
 
 - Sonstige:
-=> Embedded SongQueue with Explorer (CheckUDP slowing PPlayer down)
+=> Embedded SongQueue with Explorer (CheckUDP slowing PPlayer down) -> UiUiUi
+=> Neues SongQueue system im eimer
 
 - Bugs:
 -> Probleme mit XTrayBox
@@ -164,35 +158,35 @@ PPlayer:
 => Timer for plugindownload -> oT
 => Webannounce after deleting GUIs -> oT
 => Faster WM_Notify -> oT
+=> BugReport -> kein Obj mehr -> fixed
+=> Rating mit buttons oder so -> fixed
+=> Wiedergabelisten-Dateien auslesen können (streams!) -> größtenteils done
+=> Trayicon -> done
 
 To Fix:
 => Lautstärke..
 => Taskleiste -> Quit -> oT
 => Statistic lil buggy (especially songview)
-=> PPlayer SongView - one unique song entered with 2 genres (2 songs)
+==> PPlayer SongView - one unique song entered with 2 genres (2 songs)
 => Error beim Stream
-=> BugReport -> kein Obj mehr
 => "Error" in expression beim Stream (error-checking: is es wirklich ein stream den ich spielen kann)
-=> Rating mit buttons oder so
 => Anzeige im Stream-Fenster wies mitter Connection aussieht
-=> Wiedergabelisten-Dateien auslesen können (streams!)
-=> Trayicon
 => CVS-Rep for updater
 
 Many bugfixes, reviped stream, new plugin: MiniPPlayer, crashsystem: Checks for crashes and instructs user what to do
 
-- BugReport: Fehlt bei 0.9.4 wird aber via Plugins.au3 geladen - oT
+- BugReport: Fehlt bei 0.9.4 wird aber via Plugins.au3 geladen - oT -> fixed
 - Plugins checked (in List) but not activated
-- Verify nicht mehr wichtig (ViewLog kann nun über SongView geschehen) -> oT
+- Verify nicht mehr wichtig (ViewLog kann nun über SongView geschehen) -> oT -> removed (neues verifysystem nötig)
 - kxf's werden nicht upgedatet (vllt wie Skinsystem arrangieren)
 - iconfiles auch nicht
 - stream lädt sehr lange, keine Rückmeldung an den nutzer (läuft es jetzt oder nicht)
 - spalten inner stream-GUI nicht korrekt (recht klein)
 - "..." on SongView
-- Enhance PlayList: "Play,Delete,SavePlaylist,SaveSelected,Load"
-- PPlayer adding jpg's to playlist
+- Enhance PlayList: "Play,Delete,SavePlaylist,SaveSelected,Load" -> bis auf Playlist sachen - done
+- PPlayer adding jpg's to playlist -> fixed?
 - Stream not updating information... (Pause/Resume -> works)
-- Stream -> Normal fileplay "Stream @ 320kb/s" - PlayingStream doesn't change fast enough... (skips song)
+- Stream -> Normal fileplay "Stream @ 320kb/s" - PlayingStream doesn't change fast enough... (skips song) -> fixed?
 - Changing a song takes over 10 seconds (new song plays but info is the old one)
 - jpgs -> stream?!
 
