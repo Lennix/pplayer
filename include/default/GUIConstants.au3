@@ -24,3 +24,7 @@
 #include "ProgressConstants.au3"
 #include "AVIConstants.au3"
 #include "UpDownConstants.au3"
+
+Global Const $MsgBox_YesNo = 4
+Global Const $MsgBox_Yes = 6
+Global Const $MsgBox_No = 7
