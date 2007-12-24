@@ -104,7 +104,7 @@ EndIf
 
 Global $Begin = TimerInit()
 #region Opts
-Global $version = "0.9.5 RC4"
+Global $version = "0.9.5"
 Global $releasetimestamp = 1198445371
 Global $dbversion = "0.9"
 Global $backup = True
