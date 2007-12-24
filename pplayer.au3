@@ -1735,12 +1735,14 @@ Func QueryDB($Filepath)
 	Return $tag
 EndFunc   ;==>QueryDB
 
-Func AddToDB($Filepath)
+Func AddToDB($Filepath,$FullLoad = True)
 	$tag = ReadFileInfo($Filepath)
 	If @error > 0 Then Return SetError(1, 0, False)
-	$genre = UpdateGenre($tag[1], $tag[3])
-	If Not @error Then $tag[4] = $genre
-	If LoadSetting("settings","coverload",$GUI_CHECKED) == $GUI_CHECKED And Not FileExists(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg") And Not FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") Then LoadCover($tag[1], $tag[2])
+	If $FullLoad Then
+		$genre = UpdateGenre($tag[1], $tag[3])
+		If Not @error Then $tag[4] = $genre
+	EndIf
+	If LoadSetting("settings","coverload",$GUI_CHECKED) == $GUI_CHECKED And Not FileExists(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg") And Not FileExists("covers\" & $tag[1] & "-" & $tag[2] & ".jpg") And $FullLoad Then LoadCover($tag[1], $tag[2])
 	ReDim $tag[9]
 	$message = ""
 	$tag[6] = $Filepath
@@ -2240,7 +2242,7 @@ Func SetList($filename)
 			If Not @error Then
 				$show = $tag[3] & " - " & $tag[1]
 				Inqueue($tag[3], $tag[1])
-				AddToDB($filename)
+				AddToDB($filename,False)
 			Else
 				$show = StringTrimLeft($filename, StringInStr($filename, "\", 1, -1))
 			EndIf
@@ -2279,7 +2281,7 @@ Func DelFromList()
 		_GUICtrlListView_DeleteItemsSelected($lieder)
 		If $PlayNext Then
 			NextInList()
-		ElseIf UBound($liste) == 1 Then
+		ElseIf UBound($liste) == 1 And StringLen($liste[0]) == 0 Then
 			Stop()
 		Else
 			Focus($activelistid)
