@@ -2277,6 +2277,7 @@ Func DelFromList()
 		Next
 		For $i = 1 To $ItemSel[0]
 			_ArrayDelete($liste, $ItemSel[$i])
+			If @Error == 2 Then $liste[0] = ""
 		Next
 		_GUICtrlListView_DeleteItemsSelected($lieder)
 		If $PlayNext Then
