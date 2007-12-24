@@ -15,15 +15,20 @@ Func MiniPPlayer_OnPluginLoad()
 EndFunc   ;==>MiniPPlayer_OnPluginLoad
 
 Func MiniPPlayer_CreateCustomGUI()
-	Global $MiniPPlayerGui = GUICreate("PPlayer Mini Mode", 360, 47, 193, 125, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_TOPMOST, $WS_EX_WINDOWEDGE))
+	Global $MiniPPlayerGui = GUICreate("PPlayer Mini Mode", 366, 46, -1, -1, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_TOPMOST, $WS_EX_WINDOWEDGE))
 	GUISetBkColor(0xA6CAF0)
 	GUISetOnEvent($GUI_EVENT_CLOSE,"MiniPPlayer_Close")
-	Global $MiniPPlayerLabel1 = GUICtrlCreateLabel("", 3, 5, 297, 23)
+	Global $MiniPPlayerLabel1 = GUICtrlCreateLabel("", 3, 5, 252, 23)
 	GUICtrlSetFont(-1, 12, 800, 0, "Arial")
 	Global $MiniPPlayerLabel2 = GUICtrlCreateLabel("", 3, 26, 235, 17)
-	Global $MiniPPlayerIcon1 = GUICtrlCreateIcon($PP_IcoFolder, 6, 316, 6, 32, 32, BitOR($SS_NOTIFY, $WS_GROUP))
-	;If WMGetState() = "Paused"  Then GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 6) (This event is called then PPlayer starts... WMGetState will be Stopped or nothing)
+	Global $MiniPPlayerIcon1 = GUICtrlCreateIcon($PP_IcoFolder, 6, 288, 0, 48, 48, BitOR($SS_NOTIFY, $WS_GROUP)) ;Play/Pause
 	GUICtrlSetOnEvent(-1, "MiniPPlayerIconClicked")
+	Global $MiniPPlayerIcon2 = GUICtrlCreateIcon($PP_IcoFolder, 8, 256, 8, 32, 32, BitOR($SS_NOTIFY, $WS_GROUP)) ;Prev
+	GUICtrlSetOnEvent(-1,"PrevInList") ; Internal function of PPlayer
+	Global $MiniPPlayerIcon3 = GUICtrlCreateIcon($PP_IcoFolder, 5, 336, 8, 32, 32, BitOR($SS_NOTIFY, $WS_GROUP)) ;Next
+	GUICtrlSetOnEvent(-1,"NextInList") ; Internal function of PPlayer
+	;If WMGetState() = "Paused"  Then GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 6) (This event is called then PPlayer starts... WMGetState will be Stopped or nothing)
+	
 	GUISetState(@SW_SHOW)
 	WinSetTrans("PPlayer Mini Mode", "", 225)
 EndFunc   ;==>MiniPPlayer_CreateCustomGUI
