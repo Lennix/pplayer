@@ -26,10 +26,9 @@ Func MiniPPlayer_CreateCustomGUI()
 	Global $MiniPPlayerIcon2 = GUICtrlCreateIcon($PP_IcoFolder, 8, 256, 8, 32, 32, BitOR($SS_NOTIFY, $WS_GROUP)) ;Prev
 	GUICtrlSetOnEvent(-1,"PrevInList") ; Internal function of PPlayer
 	Global $MiniPPlayerIcon3 = GUICtrlCreateIcon($PP_IcoFolder, 5, 336, 8, 32, 32, BitOR($SS_NOTIFY, $WS_GROUP)) ;Next
-	GUICtrlSetOnEvent(-1,"NextInList") ; Internal function of PPlayer
-	;If WMGetState() = "Paused"  Then GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 6) (This event is called then PPlayer starts... WMGetState will be Stopped or nothing)
-	
+	GUICtrlSetOnEvent(-1,"NextInList") ; Internal function of PPlayer	
 	GUISetState(@SW_SHOW)
+	If WMGetState() = "Stopped" OR WMGetState() = "" Then GUISetState(@SW_HIDE)
 	WinSetTrans("PPlayer Mini Mode", "", 225)
 EndFunc   ;==>MiniPPlayer_CreateCustomGUI
 
@@ -38,6 +37,7 @@ Func MiniPPlayer_Close()
 EndFunc
 
 Func MiniPPlayer_SongInformationLoaded($id, $songinfo)
+	GUISetState(@SW_SHOW, $MiniPPlayerGui)
 	GUICtrlSetData($MiniPPlayerLabel1, $songinfo[3])
 	GUICtrlSetData($MiniPPlayerLabel2, $songinfo[1])
 EndFunc   ;==>MiniPPlayer_SongInformationLoaded
