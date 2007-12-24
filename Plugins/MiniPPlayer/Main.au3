@@ -3,7 +3,7 @@
 #cs ChangeLog
 	Well I just started this to submit some bugs:
 	1. When PPlayer starts MiniMode automatically opens.. (maybe change this)
-	2. When PPlayer starts MiniMode's Icon is "Pause"
+	2. When PPlayer starts MiniModes Icon is "Pause"
 	3. You should include the event SongPlayStarted / SongPlayStopped for changing the icon
 #ce
 
@@ -11,7 +11,7 @@
 PluginRegister("MiniPPlayer")
 
 Func MiniPPlayer_OnPluginLoad()
-	;PluginRegisterMenu("PPlayer Mini mode", "PPlayer Mini mode") This is useless (it registers a menuitem in PPlayer's menu) First param is the name and second the function to call on click
+	PluginRegisterMenu("MiniPPlayer_Open", "MiniPPlayer") ;This is useless (it registers a menuitem in PPlayer's menu) First param is the function to call on click and second the name of the item
 EndFunc   ;==>MiniPPlayer_OnPluginLoad
 
 Func MiniPPlayer_CreateCustomGUI()
@@ -27,13 +27,15 @@ Func MiniPPlayer_CreateCustomGUI()
 	GUICtrlSetOnEvent(-1,"PrevInList") ; Internal function of PPlayer
 	Global $MiniPPlayerIcon3 = GUICtrlCreateIcon($PP_IcoFolder, 5, 336, 8, 32, 32, BitOR($SS_NOTIFY, $WS_GROUP)) ;Next
 	GUICtrlSetOnEvent(-1,"NextInList") ; Internal function of PPlayer	
-	GUISetState(@SW_SHOW)
-	If WMGetState() = "Stopped" OR WMGetState() = "" Then GUISetState(@SW_HIDE)
 	WinSetTrans("PPlayer Mini Mode", "", 225)
 EndFunc   ;==>MiniPPlayer_CreateCustomGUI
 
 Func MiniPPlayer_Close()
 	GUISetState(@SW_HIDE,$MiniPPlayerGui)
+EndFunc
+
+Func MiniPPlayer_Open()
+	GUISetState(@SW_SHOW,$MiniPPlayerGui)
 EndFunc
 
 Func MiniPPlayer_SongInformationLoaded($id, $songinfo)
