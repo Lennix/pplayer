@@ -1858,7 +1858,7 @@ Func Startup()
 		$msg = StringSplit(LoadSetting("infos","lastsong",""),"|")
 		If Not @Error Then
 			For $i = 1 To $msg[0]
-				SetList($msg[$i])
+				If FileExists($msg[$i]) Then SetList($msg[$i])
 			Next
 			$msgid = LoadSetting("infos","lastsongid",0)
 			If $msg[0] > $msgid Then
