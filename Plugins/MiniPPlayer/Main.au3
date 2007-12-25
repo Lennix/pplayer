@@ -15,7 +15,7 @@ Func MiniPPlayer_OnPluginLoad()
 EndFunc   ;==>MiniPPlayer_OnPluginLoad
 
 Func MiniPPlayer_CreateCustomGUI()
-	Global $MiniPPlayerGui = GUICreate("PPlayer Mini Mode", 366, 46, -1, -1, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_TOPMOST, $WS_EX_WINDOWEDGE))
+	Global $MiniPPlayerGui = GUICreate("PPlayer Mini Mode", 368, 46, -1, -1, -1, BitOR($WS_EX_TOOLWINDOW, $WS_EX_TOPMOST, $WS_EX_WINDOWEDGE))
 	GUISetBkColor(0xA6CAF0)
 	GUISetOnEvent($GUI_EVENT_CLOSE,"MiniPPlayer_Close")
 	Global $MiniPPlayerLabel1 = GUICtrlCreateLabel("", 3, 5, 252, 23)
