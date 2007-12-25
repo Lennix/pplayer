@@ -103,11 +103,15 @@ While 1
 			DatabaseWork()
 		Case $Button2
 			_SQLite_Exec(-1,"DROP TABLE Songs")
+			_SQLite_Close()
+			_SQLite_Open ("db\PPlayer.db")
 			_SQLite_Exec (-1, "CREATE TABLE IF NOT EXISTS Songs (Artist,Album,Track,Genre,Filetype,Path,LastPlayed,Rating);") ; CREATE a Table
 			$Create = True
 			Info("Your database has been cleared! Click search to readd songs")
 		Case $Button3
 			_SQLite_Exec(-1,"DROP TABLE SongView")
+			_SQLite_Close()
+			_SQLite_Open ("db\PPlayer.db")
 			_SQLite_Exec(-1, "CREATE TABLE IF NOT EXISTS SongView (Played,Artist,Album,Track,Genre,Duration);") ; CREATE a Table
 			Info("Your statistic has been cleared!")
 		Case $Database_Choose
