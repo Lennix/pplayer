@@ -1856,12 +1856,18 @@ Func Startup()
 	If LoadSetting("settings","loadsongs",$GUI_UNCHECKED) == $GUI_CHECKED Then
 		$Playing = True
 		$msg = StringSplit(LoadSetting("infos","lastsong",""),"|")
-		For $i = 1 To $msg[0]
-			SetList($msg[$i])
-		Next
-		$msg = LoadSetting("infos","lastsongid",0)
-		Focus($msg)
-		Play_active()
+		If Not @Error Then
+			For $i = 1 To $msg[0]
+				SetList($msg[$i])
+			Next
+			$msgid = LoadSetting("infos","lastsongid",0)
+			If $msg[0] > $msgid Then
+				Focus($msgid)
+				Play_active()
+			Else
+				SaveSetting("infos","lastsongpos",0)
+			EndIf
+		EndIf
 	EndIf
 	StartTray()
 	Opt("OnExitFunc", "logoff")
