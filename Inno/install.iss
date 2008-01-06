@@ -8,6 +8,7 @@ AppPublisher=Pascal Kühne
 AppPublisherURL=http://pplayer.net.ms
 AppSupportURL=http://sourceforge.net/projects/pplayer
 AppUpdatesURL=http://sourceforge.net/projects/pplayer
+LicenseFile=..\GNU-GPL.txt
 DefaultDirName={pf}\PPlayer
 DefaultGroupName=PPlayer
 AllowNoIcons=yes
