@@ -68,6 +68,18 @@ Dim $GlobalHeader, $GlobalCorners, $Globalcolor, $CtrlButton[1][4]
 Dim $StopFirst = True
 If $XS_debug Then Opt("TrayIconDebug", 1)
 Func XSkinGUICreate($XS_guiTitle, $XS_width, $XS_height,$Skin_Folder, $guiHeader = 1, $guiCorners = 25,$x = -1,$y = -1,$Style = -1,$Ref = -1)
+	If $Skin_Folder == $GUI_CHECKED Then
+		If $Ref <> -1 Then
+			$GUI = GUICreate($XS_guiTitle,$XS_width - $factorX*2,$XS_height - $factorY*2,$x,$y,-1,$Style,$ref)
+		Else
+			$GUI = GUICreate($XS_guiTitle,$XS_width - $factorX*2,$XS_height - $factorY*2,$x,$y,-1,$Style)
+		EndIf
+		GUISetBkColor(debug("0x" & LoadSetting("settings","BkColor","000000")))
+		GUISetIcon("resource\pplayer.ico",-1)
+		$factorX = 5
+		$factorY = 5
+		Return $GUI
+	EndIf
 	If Not FileExists($Skin_Folder) Then 
 		If FileExists($PP_Dir & "Skins\Carbon") Then Return XSkinGUICreate($XS_guiTitle,$XS_width,$XS_height,$PP_Dir & "Skins\Carbon",$guiHeader,$guiCorners,$x,$y,$Style,$Ref)
 		XSkinError("The $Skin_Folder was not found")
@@ -365,6 +377,13 @@ Func XSkinTrayBox($TBTitle, $TBText,$Sleep = "")
 	XSkinMsgBox($TBTitle, $TBText, "", 3,$Sleep)
 EndFunc   ;==>XSkinTrayBox
 Func XSkinIcon(ByRef $XS_hWin, $XS_cH = 1,$XS_EventFunc = "")
+	If $Skin_Folder == $GUI_CHECKED Then
+		If UBound($XS_EventFunc) > 0 Then
+			If UBound($XS_EventFunc) > 2 Then GUISetOnEvent($GUI_EVENT_MINIMIZE,$XS_EventFunc[2],$XS_hWin)
+			If UBound($XS_EventFunc) > 1 Then GUISetOnEvent($GUI_EVENT_CLOSE,$XS_EventFunc[1],$XS_hWin)
+		EndIf
+		Return True
+	EndIf
 	If $XS_cH > 3 Or $XS_hWin = "" Then Return
 	Local $XS_b, $XS_IPos1 = $XS_Isize, $XSIPos, $XS_winB[$XS_cH + 1]
 	If StringRight($Icon_Folder, 1) <> "\" Then $Icon_Folder &= "\"
@@ -397,6 +416,15 @@ Func XSkinError($XE_msg)
 	Exit
 EndFunc   ;==>XSkinError
 Func XSkinAnimate($Xwnd, $Xstate = 1, $Xstyle = 0, $Xtrans = 0, $Xspeed = 1000)
+	If $Skin_Folder == $GUI_CHECKED Then 
+		Switch $Xstate
+			Case 1
+				GUISetState(@SW_SHOW,$Xwnd)
+			Case 2
+				GUISetState(@SW_HIDE,$Xwnd)
+		EndSwitch
+		Return True
+	EndIf
     ; $Xstate  - 1 = Show, 2 = Hide, "" = No State Set
     ; $Xstyle - 1=Fade, 3=Explode, 5=L-Slide, 7=R-Slide, 9=T-Slide, 11=B-Slide, 13=TL-Diag-Slide, 15=TR-Diag-Slide, 17=BL-Diag-Slide, 19=BR-Diag-Slide
     Local $Xpick = StringSplit('80000,90000,40010,50010,40001,50002,40002,50001,40004,50008,40008,50004,40005,5000a,40006,50009,40009,50006,4000a,50005', ",")
