@@ -55,13 +55,16 @@ While 1
             Global $ListViewItems[1]=["0"]
             If _SQLite_GetTable2d(-1,"Select * From "&GUICtrlRead($TableSelectCombo)&";",$aResult,$iRows,$iColumns) = $SQLite_OK Then
                 GUICtrlDelete($TableDisplayList)
+				ProgressOn("PPlayer - DBView","Loading " & GUICtrlRead($TableSelectCombo) & " " & $iRows & " entries")
                 Local $HeaderStr=$aResult[0][0]
                 For $i=1 To $iColumns-1
                     $HeaderStr&="|"&$aResult[0][$i]
                 Next
                 $TableDisplayList=GUICtrlCreateListView($HeaderStr,5,30,630,445)
                 For $i=1 To $iRows
-                Local $ItemStr=$aResult[$i][0]
+					ProgressSet($i/$iRows*100,$i)
+					If GUIGetMsg() == $GUI_EVENT_CLOSE Then Exit 0
+					Local $ItemStr=$aResult[$i][0]
                     For $n=1 To $iColumns-1
                         $ItemStr&="|"&$aResult[$i][$n]
                     Next
@@ -69,6 +72,7 @@ While 1
                     Redim $ListViewItems[$ListViewItems[0]+1]
                     $ListViewItems[$ListViewItems[0]]=GUICtrlCreateListViewItem($ItemStr,$TableDisplayList)
                 Next
+				ProgressOff()
             EndIf
         Case $GUI_EVENT_CLOSE
             Exit
