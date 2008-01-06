@@ -11,24 +11,37 @@ ToDo:
 
 * OnHover Icons ^ OnButtonClicked Icons
 
-* StreamRevipe:
-- New GUI
-- ListView containing Stream with more info
+* StreamRevipe: -> Done with 0.9.5
+- New GUI -> done
+- ListView containing Stream with more info -> done
 - Label for connecting info
 - vllt. Suchfenster und Streamlisten (Streamsharing über IRC-Netz (sollte bald mal aufgebaut werden) / oder Inet-Plattform)
-
-Offline: Skins!! (Installer)
 
 * Icons:
 => Icons are downloadable like skins and chooseable on the Generaltab in the settings
 => Changing icons is possible on runtime
 
-* Pluginfähigkeit:
-=> Sämtliche "Nicht-Kern-Funktionen" in Plugins auslagern um Performance zu sparen -> Fast fertig
-=> PluginTab in Settings -> Sollte getan werden
-=> PluginPortal fürs Downloaden -> Zusammen mit 2.
+* Pluginfähigkeit: -> done with 0.9.5
+=> Sämtliche "Nicht-Kern-Funktionen" in Plugins auslagern um Performance zu sparen -> Fast fertig -> done
+=> PluginTab in Settings -> Sollte getan werden -> done
+=> PluginPortal fürs Downloaden -> Zusammen mit 2. -> done
 
-* Plugins:
+* SimilarUpdate:
+=> Save any similarband in SQL
+=> Sort them on load (DISTINC Artist FROM Songs WHERE Artist = Similar1 AND Artist = Similar2 ...)
+==> Similars always uptodate
+
+* Disable skin:
+=> XSkinCreateGUI Hooken
+==> Wenn XSkin_Folder = -1 eine normale GUI erstellen und FactorX/Y auf 0 bzw 5 oder so setzen
+==> Setting im SkinTab
+
+* Skincreator
+=> Koda mitgeliefert
+=> 0-7 BMP GUImäßig einfügen
+=> Hintergrundfarbe / Textfarbe ändern
+
+* Plugins: -> 75% Done
 => Lyrics -> Done
 => Podcast -> Done
 => Debugger -> Done
@@ -93,12 +106,12 @@ Sachen fürs Designupdate:
 => Langsam wichtiger
 
 => SkinSystem:
-- Skins mit Rating (Rating vom User) (in Info anzeigen)
 ---> Mit 0.9 verbessert
 
 - Sonstige:
 => Embedded SongQueue with Explorer (CheckUDP slowing PPlayer down) -> UiUiUi
 => Neues SongQueue system im eimer
+* Kommentarblöcke vor Funktionen
 
 - Bugs:
 -> Probleme mit XTrayBox
@@ -135,8 +148,34 @@ Sachen fürs Designupdate:
 -> Veränderung an Playing:
 => Zweite Ausführung von Playing sollte abgeschafft werden
 
+- GUIs:
+-> Lyrics (now with Load-Button)
+-> Settings - GeneralTab (with new settings)
+-> Settings - SkinsTab (with option to disable skins)
+-> MusicManager GUI (Treeview or Images)
+
 Done:
 PPlayer:
+
+=> 0.9.6:
+- BugFixes:
+* SongView:
+-> Wrong URLs
+- Added:
+* Lyrics:
+-> AutoLoad Lyrics
+- Changed:
+* Lyrics:
+-> GUI now with CheckBox for AutoLoad
+-> Inputs only readable
+* DBView:
+-> Progress (in %)
+-> EVENT_CLOSE on load
+* Skins:
+-> Skin can now be disabled
+=> No XSkin
+* Expiring version:
+-> A expired version will now always longer its date by 1 month after showing infobox
 
 => 0.9.5:
 Mayor changes:
