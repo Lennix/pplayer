@@ -105,14 +105,17 @@ EndIf
 Global $Begin = TimerInit()
 #region Opts
 Global $version = "0.9.5"
-Global $releasetimestamp = 1198445371
+Global $releasetimestamp = LoadSetting("infos","releasetimestamp",1198445371)
 Global $dbversion = "0.9"
 Global $backup = True
 
 If LoadSetting("infos","version","0.9.4") <> $version Then
 	SaveSetting("infos","version",$version)
 Else
-	If $releasetimestamp + 2592000 < _TimeGetStamp() And Info("The support of your version of PPlayer expired. That means its possible that many problems occur due to the Backend is always changed. You might download the latest version of PPlayer to get the recent changes. Do you want to download the latest version?",$MsgBox_YesNo) == $MSGBox_Yes Then DownloadPPlayer()
+	If $releasetimestamp + 2592000 < _TimeGetStamp() Then
+		If Info("The support of your version of PPlayer expired. That means its possible that many problems occur due to the Backend is always changed. You might download the latest version of PPlayer to get the recent changes. Do you want to download the latest version?",$MsgBox_Button_YesNo) == $MSGBox_Return_Yes Then DownloadPPlayer()
+		SaveSetting("infos","releasetimestamp",$releasetimestamp + 2592000)
+	EndIf
 EndIf
 	
 If Not @Compiled Then
@@ -160,16 +163,18 @@ Global $PluginSettingsTabs[1]
 
 PluginTrigger("OnPluginsRegistered")
 
-$Skin_Folder = $PP_Dir & "Skins\" & GetOpt("skin")
-If Not FileExists($Skin_Folder) Then DownloadSkin(GetOpt("skin"))
-$Icon_Folder = $PP_Dir & "Skins\Default"
-$PP_IcoFolder = "resource\" & LoadSetting("settings", "icos", "Metal") & "icos.dll"
-
-If IniRead("db\settings.ini", "settings", "skin", "") == "" Then
-	IniWrite("db\settings.ini", "settings", "BkColor", StringTrimLeft(IniRead($Skin_Folder & "\Skin.dat", "color", "background", ""), 2))
-	IniWrite("db\settings.ini", "settings", "TextColor", StringTrimLeft(IniRead($Skin_Folder & "\Skin.dat", "color", "fontcolor", ""), 2))
-	IniWrite("db\settings.ini", "settings", "skin", GetOpt("skin"))
+$Skin_Folder = LoadSetting("settings","skinsact",$GUI_CHECKED)
+If $Skin_Folder == $GUI_CHECKED Then
+	$Skin_Folder = $PP_Dir & "Skins\" & GetOpt("skin")
+	If Not FileExists($Skin_Folder) Then DownloadSkin(GetOpt("skin"))
+	$Icon_Folder = $PP_Dir & "Skins\Default"
+	If IniRead("db\settings.ini", "settings", "skin", "") == "" Then
+		IniWrite("db\settings.ini", "settings", "BkColor", StringTrimLeft(IniRead($Skin_Folder & "\Skin.dat", "color", "background", ""), 2))
+		IniWrite("db\settings.ini", "settings", "TextColor", StringTrimLeft(IniRead($Skin_Folder & "\Skin.dat", "color", "fontcolor", ""), 2))
+		IniWrite("db\settings.ini", "settings", "skin", GetOpt("skin"))
+	EndIf
 EndIf
+$PP_IcoFolder = "resource\" & LoadSetting("settings", "icos", "Metal") & "icos.dll"
 
 #endregion
 
@@ -910,11 +915,11 @@ Func SettingsBuild()
 	; SongView - URLs
 	Global $SettingsGroup4 = GUICtrlCreateGroup("URLs", 8, 32, 473, 190)
 	GUICtrlCreateLabel("Direct-URL:", 16, 56, 60, 17)
-	GUICtrlCreateInput($PP_HP & "images/" & $id & ".gif", 16, 80, 441, 21, $ES_READONLY)
+	GUICtrlCreateInput($PP_HP & "web.php?user=" & $id & "&tc=" & LoadSetting("settings","TextColor","FFFFFF") & "&bc=" & LoadSetting("settings","BkColor","000000"), 16, 80, 441, 21, $ES_READONLY)
 	GUICtrlCreateLabel("BBCode: (Forum)", 16, 114, 108, 17)
-	GUICtrlCreateInput("[url=http://pplayer.net.ms][img]" & $PP_HP & "images/" & $id & ".gif[/img][/url]", 16, 136, 441, 21, $ES_READONLY)
+	GUICtrlCreateInput("[url=http://pplayer.net.ms][img]" & $PP_HP & "web.php?user=" & $id & "&tc=" & LoadSetting("settings","TextColor","FFFFFF") & "&bc=" & LoadSetting("settings","BkColor","000000") & "[/img][/url]", 16, 136, 441, 21, $ES_READONLY)
 	GUICtrlCreateLabel("HTMLCode: (Blog/Website etc)", 16, 168, 154, 17)
-	GUICtrlCreateInput("<a href='http://pplayer.net.ms'><img src='" & $PP_HP & "images/" & $id & ".gif'></a>", 16, 192, 441, 21, $ES_READONLY)
+	GUICtrlCreateInput("<a href='http://pplayer.net.ms'><img src='" & $PP_HP & "web.php?user=" & $id & "&tc=" & LoadSetting("settings","TextColor","FFFFFF") & "&bc=" & LoadSetting("settings","BkColor","000000") & "'></a>", 16, 192, 441, 21, $ES_READONLY)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	Global $SettingsGroup4 = GUICtrlCreateGroup("Settings", 8, 226, 473, 74)
 	GUICtrlCreateLabel("Nickname:", 16, 250, 55, 17)
@@ -1376,7 +1381,6 @@ EndFunc   ;==>PlaymodeHelp
 
 Func StatBuild()
 	Global $StatGUI = XSkinGUICreate("PPlayer - Statistic", 563 + $factorX * 2, 386 + $factorY * 2, $Skin_Folder, 1, 25, -1, -1, -1, $MainGUI)
-	GUISetBkColor("0x" & GetOpt("BkColor"))
 	XSkinIcon($StatGUI, 3, StringSplit("StatClose|StatClose|StatHelp", "|"))
 	Global $StatListView1 = _GUICtrlCreateListView("Artist                    |Album                  |Track                 |Genre|Duration", 0 + $factorX, 72 + $factorY, 563, 310)
 	GUICtrlSetOnEvent(-1, "StatSort")
@@ -1926,7 +1930,7 @@ Func StartTray()
 EndFunc   ;==>StartTray
 
 Func StartGUI()
-	Global $Title = "PPlayer - V" & $version & " " & Chr(169) & " Pascal"
+	Global $Title = "PPlayer"
 	$y = IniRead("db\settings.ini", "window", "y", @DesktopHeight / 2 - 250)
 	If $y + 1 > @DesktopHeight Then
 		$y = @DesktopHeight / 2 - 250
@@ -2283,7 +2287,6 @@ Func DelFromList()
 		Next
 		For $i = 1 To $ItemSel[0]
 			_ArrayDelete($liste, $ItemSel[$i])
-			If @Error == 2 Then $liste[0] = ""
 		Next
 		_GUICtrlListView_DeleteItemsSelected($lieder)
 		If $PlayNext Then
