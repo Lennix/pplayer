@@ -5,8 +5,10 @@
 
 package client;
 
+import java.awt.*;
+
 /**
- *
+ * Main class of the program
  * @author pascal
  */
 public class Client {
@@ -19,6 +21,12 @@ public class Client {
     }
     
     
+    /**
+     * This is the main constructor
+     * 
+     * @author Pascal
+     * @version 0.01
+     */
     public Client()
     {
         Profession water = new Profession();
@@ -28,9 +36,16 @@ public class Client {
         Character character = new Character(startCoordinates,attributes,skills,new Skin());
         
         debug("Coords: " + character.coordinates.toString());
+        
+        Environment env = new Environment();
+        env.setVisible(true);
+        
+        
+        
     }
     
     /**
+     * Some debugfunction to check the output in the console
      * @param text This is the text to output
      */
     public void debug(String text)

@@ -6,7 +6,7 @@
 package client;
 
 /**
- *
+ * Skills is a list containing all skills available for a player or a profession
  * @author pascal
  */
 public class Skills {

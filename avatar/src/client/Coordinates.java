@@ -6,7 +6,7 @@
 package client;
 
 /**
- *
+ * Just stores x,y coordinates on the screen or on the map
  * @author pascal
  */
 public class Coordinates {

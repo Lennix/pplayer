@@ -6,7 +6,7 @@
 package client;
 
 /**
- *
+ * The profession has skills and abilities which are added to the character
  * @author pascal
  */
 public class Profession {

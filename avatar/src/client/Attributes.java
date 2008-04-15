@@ -6,7 +6,7 @@
 package client;
 
 /**
- *
+ * Stores the attributs of a player or a profession
  * @author pascal
  */
 public class Attributes {

@@ -6,7 +6,7 @@
 package client;
 
 /**
- *
+ * This is the Java2D class
  * @author pascal
  */
 public class Skin {

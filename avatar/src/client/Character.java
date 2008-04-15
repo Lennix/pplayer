@@ -6,7 +6,7 @@
 package client;
 
 /**
- *
+ * This is the main class for controlling the character.
  * @author pascal
  */
 public class Character {
