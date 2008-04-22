@@ -22,7 +22,7 @@ public class Client {
     
     
     /**
-     * This is the main constructor
+     * This is the main constructor for the client
      * 
      * @author Pascal
      * @version 0.01
