@@ -1,0 +1,246 @@
+0.3.7.0
+- implemented a new GUI:
+ * added GuiContainer class
+ * added Window class
+ * added NButton class
+ * added Panel class
+ * added ScrollPanel class
+ * added HScrollBar class
+ * added VScrollBar class
+- changed the initialization of the BaseObject class
+- now we can create new instances of the Rectangle class too
+- improvered the Text's render routine
+- fixed minor bugs
+
+0.3.6.1
+- fixed a bug of mask
+- fixed bugs in MidiCore
+- fixed bugs in WaveCore
+- fixed bugs in Text and EWFont
+- added new functions to Text and EWFore
+- added new functions to the Keyboard
+- fixed (?) a bug of game engine's thread
+- added methods to BruteForeCollision
+- added 12 examples
+  1) how create a window
+  2) how write text to screen
+  3) how use the sprite's basics
+  4) use keyboard (and ILoopable interface)
+  5) a very easy camera's example
+  6) camera.centerOn( IPlain2D )
+  7) Collisions between sprites (GroupCollision)
+  8) the IClickable Interface
+  9) the basics of Animo class
+  10) the BaseList class
+  11) Collisions between sprites (BruteForceCollision)
+  12) Midi and Wave
+
+0.3.6.0
+- fixed collisions of roteated sprites (CollisionUtils)
+- changed a lot of methods of the analyzer class
+- added the class GetTile and GetTileButton 
+- changed the Analyzer and like classes for the GetTile function
+- now the Game Engine core, in the UEditor, is inside an InternalWindow
+- added buttons: save and load in the UEditor
+- changed the camera's managment routines in the UEditor
+- added a lot of "private static final long serialVersionUID"
+- added the TiledMap panel in the SouthPanel
+- removed the finalization from the BaseObject for gain speed from the GarbageCollection
+- fixed a lot of bugs from the Type object
+- changed the method for gain memory in the ImageData class
+- the class ImageType now it's final
+- removed the finalzation and changed the destroy method of the Texture classes
+- added a constructor to the Tile class
+- changed the annotations of the TileManager
+- added the TileManagerEditor class
+
+- now the TimeOutOpController print more information at screen:
+  * number of drawable elements,
+  * number of loopable elements,
+  * info. about the current loopable element,
+  * the current game engine stack
+- It's changed the termination method too: now is stopeed the JVM instead of the Thread..
+
+0.3.5.0
+ - fixed the bug about the flashing screen in the editor
+ - configured a lot of classes for working with the UEditor
+ - fixed the bug of movable IMaskerable objects
+ - fixed the bug of movable camera in the texture selector in the UEditor
+ - fixed the bug of right click on the buttons in the texture selector in the UEditor
+ - fixed bug of Animo
+ - fixed bug of TextureCompact
+ - fixed bug of the Core inside AWT Component
+ - fixed bug of BruteForceCollision list
+ - now the Core's window can be resized in the AWT Components
+   * added the method setDrawableArea(..) to the Camera class
+ - fixed the TileEditor
+ - added methods to the Sprite class
+ - added methods to the Mouse
+ - fixed other minors bugs
+ - other minors changes
+ 
+0.3.4.1
+ - fixed a bug of CollisionUtils
+ - fixed a bug of the TileEditor
+ - fixed minor bugs
+ - now the textures free memory from RAM
+ - added other captabilty to the UEditor (not finished yet)
+ - fixed a lot of problems relatives to the Serialization (the Textures have anyway problems of serialization now .. )
+ 
+0.3.4.0
+ - fixed very much bugs about the Mouse and IClickable objects.
+ - fixed the animo
+ - fixed a bug of the Sprite.
+ - fixed minor bugs
+ - implemented a first version of UEditor (not finished yet)
+ - added the org.easyway.gui.Button object (it's used by the UEditor)
+ - fixed swing\awt + core
+
+0.3.3.0
+NOTE: I've inserted a little Demo-Game (you can find it in the 'demoGame' package)
+ - I'm starting to write a better version of BaseList (this will be called BaseLinkedList)
+ - I'm starting to write the UniversalEditor
+ - I've fixed a bug of Core + Swing
+ - now the 3DS are fully loaded without but texture at this time.
+ - now we can write text in 3D space
+
+0.3.2.3
+ - fixed the previous release
+0.3.2.2
+ - fixed the bug of BMP images.
+ - fixed (?) the bug of Keyboard\Mouse of org.easyway.input package.
+0.3.2.1
+ - fixed the bug of Mouse using the Lwjgl instead of Swing.
+0.3.2.0
+now the game egine works in Swing too!!
+We've write a new Game Engine's core :)
+ - added the constructor: Core( int width, int height, int bpp, Component component )
+ - created the package: org.easyway.input
+ - created the classes: 
+   - Mouse (org.easyway.input)
+   - Keyboard (org.easyway.input)
+ - the reference StaticRef.camera is now protected
+ - added the methods setters and getters for the StaticRef.camera
+ 
+0.3.1.1
+ - fixed a bug relative to the texture making
+ - fixed a bug of the setLibrary() method of core
+0.3.1.0
+ - fixed the bug of Transparent Texture
+ - changed the technique of collision of TileManager (now is more fast and efficient)
+ - added the SentrySprite class
+ - added the Sentry class
+ - added to IPoint the methods:
+   - getXonScreen
+   - getYonScreen
+ - now the game engine don't need more the -Djava.library.path argument to the VM (thx to Jonas B.!)
+ - now the EWText class can laod ttf font file (thx to Jonas B.!)
+ - added a new MIDI player
+ - added a new WAV\OGG player
+
+0.3.0.0
+ - a new Core
+ - now the game engine is more easy to extend
+ - the game's lists are more fast .
+ - the Type of any object isn't a String but it's an object
+ - added some captability to the Text-writer classes ( not finished yet )
+ - speeded up the ParticleManager
+ - The game engine Lists now uses generics
+The game engine render is a bit faster 'cause doesn't use the JNI call when isn't necessary (OpenGLState class)
+ - now we can use the InitOptimizer (based on javassist; not finished yet 
+ - added captability to the Tile\TileManager
+ - Fixed a BUG relative to the Collision Core.
+ - changed the structure of packages.
+ - implemented the Audio Core.
+
+ - InitOptimizator captability:
+   - self-write the body of the methods of the classes that implements the ILayerID interface
+   - change the functionality of the core for the debugging\normal execution 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+0.2.2.4
+ added to SimpleSprite the methods:
+   - getXonScreen
+   - getYonScreen
+ added to TileSprite the methods:
+   - getAdiacents
+   - setTile
+ speeded up the collision of TileManager 
+ (adding the mask field)
+0.2.2.2
+ fixed the roteated collision
+ now work the collision of the roteated\resized sprites
+0.2.2.1
+ fixed the roteated collision
+0.2.2.0
+ added the CollisionList class (to fix the collisionList field in SimpleSpriteColl & SpriteColl)
+ fixed the ImageUtils class
+0.2.1.0
+ fixed and changed the TileManager and TileManagerEditor
+0.2.0.0
+ changed BaseObject kill method
+ added the TileManagerEditor GUI (by Bruno la ferriere)
+ Created the rpgText
+ fixed some minor bugs
+ speeded up the GameEngine
+0.1.9.2
+ finded and fixed a bug in the texture serialization 
+ fixed the binding of textures 
+ fixed an little error on EWStaticFont 
+ I've done a little optimization of EWFont class 
+0.1.9.1
+ the BaseObject that implements IClickable now will be autoadded to EWMouse list.
+ fixed remove method of EWMouse
+ fixed VectorSpeed
+ little speeded up the BaseList
+0.1.9
+ added functions to EWMouse
+ changed the IClickable interface
+ fixed an error in TileManager
+ changed the TileIterator class  
+ fixed the texture serialization
+ fixed the camera serialization
+ fixed the save and load method of core
+ fixed sprites
+ fixed CollisionUtils
+0.1.8.3
+ fixed a bug in LayerList
+ fixed EWMouse
+ added IType and IClickable
+0.1.8.2
+ fixed some bugs in BaseList
+ fixed some bugs in EWText and EWFont
+0.1.8
+ fixed some bugs in BaseList
+ BaseList now self-work in recursive calls
+ added 4 translation effects
+ added textureFBO
+ rewritten some rendering code.
+0.1.7
+ fixed a little bug of text
+ now the game engine can works in jar files. 
+0.1.6
+ added the Kill message
+ improvered the "type" field
+0.1.5
+ fixed a bug on Sprite class
+ speed up the Sprite class
+ speed up the LayerList
+ speed up the BaseList
+0.1.4
+ re-fixed a recent error on LayerList
+ fixed an error on BaseList
+ fixed an error on BaseObject
+ fixed an error on ParticleEngine
+ changed a line of code in BaseObject
+0.1.3
+ fixed a recent error on LayerList
+ changed a line of code in BaseObject
+0.1.2
+ updated the java-doc of some classes
+ fixed the bug of setLayer( int ) of ParticleEngine 
+ I've added some changes to the QuadManager class
+0.1.1
+ Updated the EWMouse class
+0.1.0
+ The first release

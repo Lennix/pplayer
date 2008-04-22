@@ -10,7 +10,9 @@ package client;
  * @author pascal
  */
 public class Coordinates {
-    
+    /**
+     * This are the x,y-coordinates of the coordinates
+     */
     public double x,y;
     
     
