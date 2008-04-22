@@ -40,8 +40,7 @@ public class Client {
         Environment env = new Environment();
         env.setVisible(true);
         
-        
-        
+        // blah        
     }
     
     /**
