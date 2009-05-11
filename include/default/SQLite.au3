@@ -67,7 +67,7 @@
 	_SQLite_SQLiteExe( $sDatabaseFile , $sInput , ByRef $sOutput , [$sSQLiteExeFilename = "SQLite3.exe"] ) Executes commands in SQLite.exe
 	_SQLite_Encode($vData) Returns Encoded String
 	_SQLite_Escape($sString,[$iBuffSize]) Retruns Escaped String
-	
+
 	Changelog:
 	26.11.05	Added _SQLite_QueryReset()
 	26.11.05	Added _SQLite_QueryFinalize()
@@ -148,7 +148,7 @@ Global Const $SQLITE_DONE = 101   ; /* sqlite_step() has finished executing */
 Global Const $SQLITE_DBHANDLE = 1  ; /* (Internal Only) Database Handle (sqlite3*) */
 Global Const $SQLITE_QUERYHANDLE = 2  ; /* (Internal Only) Query Handle (sqlite3_stmt*) */
 
-#include "Array.au3" 	; Using: _ArrayCreate(),_ArrayAdd(),_ArrayDelete(),_ArraySearch()
+#include "Array.au3"	; Using: _ArrayCreate(),_ArrayAdd(),_ArrayDelete(),_ArraySearch()
 #include "File.au3" 	; Using: _TempFile()
 
 Global $g_hDll_SQLite = 0
@@ -979,7 +979,7 @@ EndFunc   ;==>_SQLite_QuerySingleRow
 ;
 Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilename = -1, $fDebug = False)
 	Local $sInputFile = _TempFile(), $sOutputFile = _TempFile(), $iRval = $SQLITE_OK, $nErrorLevel
-	Local $nRunErrorsFatalOld = Opt("RunErrorsFatal", 0), $hInputFile, $sCmd, $hNewFile
+	Local $hInputFile, $sCmd, $hNewFile
 	If $sSQLiteExeFilename = -1 Or (IsKeyword($sSQLiteExeFilename) And $sSQLiteExeFilename = Default) Then
 		$sSQLiteExeFilename = "SQLite3.exe"
 		If Not FileExists($sSQLiteExeFilename) Then
@@ -1009,7 +1009,9 @@ Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilen
 				 & '" < "' & FileGetShortName($sInputFile) & '"'
 		$nErrorLevel = RunWait($sCmd, @WorkingDir, @SW_HIDE)
 		If $fDebug = True Then
+			Local $nErrorTemp = @error
 			ConsoleWrite('@@ Debug(_SQLite_SQLiteExe) : $sCmd = ' & $sCmd & @LF & '>ErrorLevel: ' & $nErrorLevel & @LF)
+			SetError($nErrorTemp)
 		EndIf
 		If @error = 1 Or $nErrorLevel = 1 Then
 			$iRval = $SQLITE_MISUSE ; SQLite.exe not found
@@ -1020,7 +1022,6 @@ Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilen
 	Else
 		$iRval = $SQLITE_CANTOPEN ; Cant open Input File
 	EndIf
-	Opt("RunErrorsFatal", $nRunErrorsFatalOld)
 	If FileExists($sInputFile) Then FileDelete($sInputFile)
 	Switch $iRval
 		Case $SQLITE_MISUSE
@@ -1157,16 +1158,16 @@ Func __SQLite_ReportError($hDB, $sFunction, $sQuery = Default, $sError = Default
 EndFunc   ;==>__SQLite_ReportError
 
 Func __SQLite_szStringRead($iszPtr, $iLen = -1)
-	Local $aStrLen, $vszString
-	If $iszPtr < 1 Then Return ""
-	If $iLen < 1 Then
-		If $g_avSafeMode_SQLite[3] < 1 Then $g_avSafeMode_SQLite[3] = DllOpen("msvcrt.dll")
-		$aStrLen = DllCall($g_avSafeMode_SQLite[3], "int:cdecl", "strlen", "ptr", $iszPtr)
-		If @error Then Return SetError(1, 0, "")
-		$iLen = $aStrLen[0] + 1
-	EndIf
-	$vszString = DllStructCreate("char[" & $iLen & "]", $iszPtr)
-	If @error Then Return SetError(2, 0, "")
-	Return SetError(0, $iLen, DllStructGetData($vszString, 1))
+    Local $aStrLen, $vszString
+    If $iszPtr = 0 Then Return ""
+    If $iLen < 1 Then
+        If $g_avSafeMode_SQLite[3] < 1 Then $g_avSafeMode_SQLite[3] = DllOpen("msvcrt.dll")
+        $aStrLen = DllCall($g_avSafeMode_SQLite[3], "int:cdecl", "strlen", "ptr", $iszPtr)
+        If @error Then Return SetError(1, 0, "")
+        $iLen = $aStrLen[0] + 1
+    EndIf
+    $vszString = DllStructCreate("char[" & $iLen & "]", $iszPtr)
+    If @error Then Return SetError(2, 0, "")
+    Return SetError(0, $iLen, DllStructGetData($vszString, 1))
 EndFunc   ;==>__SQLite_szStringRead
 #endregion 	SQLite.au3 Internal Functions
