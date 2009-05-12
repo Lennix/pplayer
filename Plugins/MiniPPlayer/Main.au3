@@ -49,7 +49,7 @@ Func MiniPPlayer_OnPluginsRegistered()
 EndFunc
 
 Func MiniPPlayerIconClicked()
-	If WMGetState() == "Paused"  Then
+	If VLCGetState() == "Paused" Then
 		GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 7)
 	Else
 		GUICtrlSetImage($MiniPPlayerIcon1, $PP_IcoFolder, 6)

@@ -38,7 +38,7 @@ Local $TableNameStr=""
 For $i=1 To $TableNames[0]
     $TableNameStr&="|"&$TableNames[$i]
 Next
-$TableSelectCombo=GUICtrlCreateCombo("",110,5,525,20,$CBS_DROPDOWNLIST)
+$TableSelectCombo=GUICtrlCreateCombo("",110,5,525,20)
 GUICtrlSetData(-1,$TableNameStr)
 $TableDisplayList=GUICtrlCreateListView("|",5,30,630,445)
 Global $ListViewItems[1]=["0"]

@@ -2,9 +2,9 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_icon=icos\pplayer.ico
 #AutoIt3Wrapper_outfile=pplayer.exe
-#AutoIt3Wrapper_Res_Comment=More details at pplayer.net.ms
+#AutoIt3Wrapper_Res_Comment=More details at kuehne-its.de/pplayer
 #AutoIt3Wrapper_Res_Description=PPlayer Beta
-#AutoIt3Wrapper_Res_Fileversion=0.9.3
+#AutoIt3Wrapper_Res_Fileversion=0.9.6
 #AutoIt3Wrapper_Res_LegalCopyright=Pascal Kuehne
 #AutoIt3Wrapper_Res_Field=Email|pascal.kuehne at googlemail dot com
 #AutoIt3Wrapper_Res_Field=Compile Date|%date% %time%
@@ -32,7 +32,7 @@
 #ce
 
 #region Includes
-#include"include\WMP.au3"
+#include"include\VLC.au3"
 #include"include\XSkin.au3"
 #include"include\ListView.au3"
 #include"include\default\SQLite.au3"
@@ -41,6 +41,8 @@
 #include"include\default\GUIConstants.au3"
 #include"include\default\GuiComboBox.au3"
 #endregion
+
+debug(@SystemDir)
 
 Global $PP_Dir = @ScriptDir & "\"
 FileChangeDir($PP_Dir)
@@ -207,7 +209,7 @@ EndFunc   ;==>Player
 Func Playing($id, $DND = False)
 	$Filepath = $liste[$id]
 	PluginTrigger("SongType" & StringTrimLeft($Filepath, StringInStr($Filepath, ".", 1, -1)), $id, $Filepath)
-	If StringInStr("http|mms", StringLeft($Filepath, 4)) Then PluginTrigger("SongIsStream", $id, $Filepath)
+	;If StringInStr("http|mms", StringLeft($Filepath, 4)) Then PluginTrigger("SongIsStream", $id, $Filepath)
 	If $SongCapturedByPlugin Then
 		If Not $LeaveWhile And $Playing Then $activelistid += 1
 		$SongCapturedByPlugin = False
@@ -221,24 +223,26 @@ Func Playing($id, $DND = False)
 		Return "Unable"
 	EndIf
 	If Not $DND Then
+		#cs
 		If $next_sound <> 0 Then
 			$active_sound = $next_sound
 		Else
 			Stop()
 			$active_sound = Play($Filepath)
 		EndIf
+		#ce
 		PluginTrigger("SongPlayStarted", $id, $Filepath)
 		$Playing = True
 		$next_sound = 0
-		If WMGetState() == "Paused"  Then Pause()
+		If VLCGetState() == "Paused"  Then Pause()
 	EndIf
 	PluginTrigger("SongLoadingInformation", $id, $Filepath)
-	$Dur = Int(WMGetDuration($active_sound))
+	$Dur = VLCGetDuration()
 	If $Dur == 0 Then Return "Failed"
 	$activelistid = $id
 	CalcPos($active_sound)
 	Focus($id)
-	If WMGetState() == "Ready"  Then $active_sound = Play($Filepath) ;If not yet play: play!
+	;If WMGetState() == "Ready"  Then $active_sound = Play($Filepath) ;If not yet play: play!
 	If LoadSongInfo($Filepath, $tag, $id) Then ; Load Song Information and display
 		LoadSongSimilar($Filepath, $tag, $similar, $id)
 		LastPlayed($tag[3], $tag[1])
@@ -258,24 +262,29 @@ Func Playing($id, $DND = False)
 	Focus($id)
 	$ActiveSongSimilar = $similar
 	$ActiveSongInfo = $tag
-	UpdateLabelAction(WMGetState()) ; Set songstate
+	UpdateLabelAction(VLCGetState()) ; Set songstate
 	WebAnnounce($tag) ;
 	Tray_info() ; Display trayinfo
 	$Rated = False
-	UpdateLabelAction(WMGetState()) ; Set songstate
+	UpdateLabelAction(VLCGetState()) ; Set songstate
 	PluginTrigger("SongInformationLoaded", $id, $tag)
 	Do
-		$Pos = WMGetPosition()
+		$Pos = VLCGetPosition()
 		Sleep(50)
-	Until WMGetState() = "stopped"  Or $LeaveWhile
+	Until VLCGetState() == "Stopped"  Or $LeaveWhile Or $Pos == $Dur
+	#cs
 	If Not $Playing Then
-		UpdateLabelAction(WMGetState())
-		While WMGetState() = "stopped"  Or $LeaveWhile
+		UpdateLabelAction(VLCGetState())
+		While VLCGetState() == "Stopped"  Or $LeaveWhile
 			If $Playing = True Then ExitLoop
 			Sleep(10)
 		WEnd
 	EndIf
-	If UBound($liste) - 2 > $activelistid Then
+	#ce
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $activelistid = ' & $activelistid & @crlf & '>Error code: ' & @error & @crlf) ;### Debug Console
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : UBound($liste) - 1 = ' & UBound($liste) - 1 & @crlf & '>Error code: ' & @error & @crlf) ;### Debug Console
+
+	If UBound($liste) - 1 > $activelistid Then
 		PluginTrigger("NextSongAvailable")
 		If $next_sound = 0 Then
 			$oldlistid = $activelistid
@@ -292,7 +301,7 @@ Func Playing($id, $DND = False)
 		EndIf
 	Else
 		PluginTrigger("NextSongNotAvailable")
-		WMStop()
+		VLCStop()
 		GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
 		GUICtrlSetState($ShowAlbum, $GUI_HIDE)
 		UpdateLabelInfo(StringSplit("||||||-1|", "|"), StringSplit("|", "|"))
@@ -314,7 +323,7 @@ EndFunc   ;==>Playing
 
 Func ShowCover($tag)
 	If LoadSetting("settings","coverload",$GUI_CHECKED) == $GUI_UNCHECKED Then Return ""
-	If FileExists(debug(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg")) Then
+	If FileExists(StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg") Then
 		GUICtrlSetImage($ShowAlbum, StringLeft($tag[6],StringInStr($tag[6],"\",0,-1)) & "Folder.jpg")
 		GUICtrlSetState($ShowAlbum, $GUI_SHOW)
 		PluginTrigger("SongCoverLoaded")
@@ -357,13 +366,6 @@ EndFunc   ;==>LoadSongSimilar
 
 Func UnknownAll(ByRef $tag, ByRef $similar, $Filepath)
 	$tag = ReadFileInfo($Filepath)
-	If @error And FileExists($Filepath) Then
-		$tag[1] = WMGetArtist($active_sound)
-		$tag[2] = WMGetAlbum($active_sound)
-		$tag[3] = WMGetTitle($active_sound)
-		$tag[4] = WMGetGenre($active_sound)
-		$tag[5] = WMGetFileType($active_sound)
-	EndIf
 	ReDim $tag[9]
 	$tag[6] = $Filepath
 	$tag[7] = 0
@@ -398,7 +400,7 @@ EndFunc   ;==>PrevInList
 
 Func Play_active()
 	$oldlistid2 = $activelistid
-	Stop()
+	If VLCGetState() == "Playing" Then Stop()
 	$LeaveWhile = True
 	If GUICtrlRead($ModeCheck[2]) == "Shuffle"  Then ;Shuffle
 		$Done = False
@@ -450,13 +452,13 @@ Func Play_active()
 EndFunc   ;==>Play_active
 
 Func Play($filename)
-	$active_sound = WMOpenFile($filename)
+	$active_sound = VLCPlay($filename)
 	If LoadSetting("infos","lastsongpos",0) > 0 Then
-		WMSetPosition(LoadSetting("infos","lastsongpos",0))
+		VLCSetPosition(LoadSetting("infos","lastsongpos",0))
 		SaveSetting("infos","lastsongpos",0)
-		UpdateLabelPos($active_sound)
+		UpdateLabelPos()
 	EndIf
-	WMPlay($filename)
+	;WMPlay($filename)
 	GUICtrlSetImage($pause_button, $PP_IcoFolder, 6)
 	Return $active_sound
 EndFunc   ;==>Play
@@ -465,24 +467,28 @@ Func Stop()
 	$Playing = False
 	$activelistid = 0
 	PluginTrigger("SongPlayStopped")
-	WMStop()
+	VLCStop()
 	GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
 	GUICtrlSetState($ShowAlbum, $GUI_HIDE)
 	UpdateLabelInfo(StringSplit("||||||-1|", "|"), StringSplit("|", "|"))
 EndFunc   ;==>Stop
 
 Func Pause()
-	Switch WMGetState()
+	Switch VLCGetState()
 		Case "Playing"
 			TrayItemSetText($Tray_Pause, "Resume")
-			WMPause()
+			VLCPause()
 			PluginTrigger("SongPlayPaused")
 			GUICtrlSetImage($pause_button, $PP_IcoFolder, 7)
 		Case "Paused"
 			TrayItemSetText($Tray_Pause, "Pause")
 			GUICtrlSetImage($pause_button, $PP_IcoFolder, 6)
 			PluginTrigger("SongPlayResumed")
-			WMResume()
+			VLCResume()
+			Do
+				sleep(50)
+			Until VLCGetState() == "Playing"
+			debug(VLCGetState())
 		Case Else
 			Play_active()
 	EndSwitch
@@ -1639,10 +1645,10 @@ Func UpdateLabelAction($message)
 	_GUICtrlStatusBar_SetText($StatusBar, $message)
 EndFunc   ;==>UpdateLabelAction
 
-Func UpdateLabelPos($active_sound)
+Func UpdateLabelPos()
 	Dim $Save[5]
-	$Pos = WMGetPosition()
-	$time = WMGetDuration($active_sound)
+	$Pos = VLCGetPosition()
+	$time = VLCGetDuration()
 	$Save[1] = Int(Int($time) / 60)
 	$Save[2] = Int($time) - $Save[1] * 60
 	$Save[3] = Int($Pos / 60)
@@ -1659,14 +1665,14 @@ EndFunc   ;==>UpdateLabelPos
 #region Slider (ChangePos,ChangeVol,CalcPos,SimilarSliderChange)
 
 Func ChangePos()
-	WMSetPosition(GUICtrlRead($Pos_Slider))
+	VLCSetPosition(GUICtrlRead($Pos_Slider))
 	GUICtrlSendMsg($Pos_Slider, $WM_ENABLE, 1, 0)
 EndFunc   ;==>ChangePos
 
 Func ChangeVol()
 	$Vol = GUICtrlRead($Vol_Slider)
 	If Not $Muted Or $Muted And $Vol <> IniRead("db\settings.ini", "infos", "vol", $Vol) Then
-		WMSetVolume($Vol)
+		VLCSetVolume($Vol)
 		_IniWrite("db\settings.ini", "infos", "vol", $Vol)
 		$Muted = False
 	EndIf
@@ -1675,18 +1681,18 @@ EndFunc   ;==>ChangeVol
 
 Func MuteVol()
 	If $Muted Then
-		WMSetVolume(GUICtrlRead($Vol_Slider))
+		VLCSetVolume(GUICtrlRead($Vol_Slider))
 		$Muted = False
 		GUICtrlSetImage($Vol_Muter, $PP_IcoFolder, 10)
 	Else
-		WMSetVolume(0)
+		VLCSetVolume(0)
 		$Muted = True
 		GUICtrlSetImage($Vol_Muter, $PP_IcoFolder, 4)
 	EndIf
 EndFunc   ;==>MuteVol
 
 Func CalcPos($active_sound)
-	GUICtrlSetLimit($Pos_Slider, Int(WMGetDuration($active_sound)), 0)
+	GUICtrlSetLimit($Pos_Slider, VLCGetDuration(), 0)
 	GUICtrlSetState($Pos_Slider, $GUI_ENABLE)
 	$Changing = 0
 EndFunc   ;==>CalcPos
@@ -1848,7 +1854,7 @@ Func Startup()
 			Info("Your database will now be filled with every song you hear. But you're only able to search for songs you already heard. If you want to create a database click 'Menu->Database")
 		EndIf
 	EndIf
-	WMStartPlayer()
+	VLCStartup()
 	$pObj.settings.enableErrorDialogs = False
 	ObjEvent($pObj,"TestEvent")
 	StartGUI()
@@ -1890,19 +1896,6 @@ Func Startup()
 	ErrorWrite("Startup took " & Round(TimerDiff($Begin) / 1000, 4) & " sec")
 	PluginTrigger("OnPPlayerLoaded")
 EndFunc   ;==>Startup
-
-Func TestEvent($Event)
-	debug("Event called: " & $Event)
-	If $Event == "Buffering" Then
-		debug($pobj.network.bufferingProgress)
-	ElseIf $Event == "MediaChange" Then
-		debug($pObj.currentMedia.name)
-		debug(WMGETArtist($pObj.currentMedia))
-		debug(WMGetAlbum($pObj.currentMedia))
-		debug(WMGetGenre($pObj.currentMedia))
-		debug(WMGetTitle($pObj.currentMedia))
-	EndIf
-EndFunc
 
 Func StartTray()
 	TraySetOnEvent(-13, "Show")
@@ -2073,10 +2066,10 @@ Func logoff()
 				$msg &= $liste[$i] & "|"
 			Next
 			SaveSetting("infos","lastsong",StringTrimRight($msg,1))
-			SaveSetting("infos","lastsongpos",Int(WMGetPosition()))
+			SaveSetting("infos","lastsongpos",Int(VLCGetPosition()))
 			SaveSetting("infos","lastsongid",$activelistid)
 		EndIf
-		WMClosePlayer()
+		VLCShutdown()
 		_SQLite_QueryFinalize($hQuery)
 		_SQLite_Close()
 		_SQLite_Shutdown()
@@ -2126,7 +2119,7 @@ Func global_check()
 	If $check == 1 Then
 		$check = 0
 		If Not $Verified Then WebAnnounce()
-		If IsObj($active_sound) Then UpdateLabelPos($active_sound)
+		If VLCGetState() == "Playing" Then UpdateLabelPos()
 		$check = 1
 	EndIf
 EndFunc   ;==>global_check
@@ -2838,7 +2831,7 @@ Func DownloadPPlayer()
 EndFunc
 
 Func debug($String)
-	ConsoleWrite(@CRLF & ">Debug: " & $String)
+	ConsoleWrite(">Debug: " & $String & @CRLF)
 	Return $String
 EndFunc   ;==>debug
 
@@ -2954,6 +2947,7 @@ Func LoadCover($interpret, $album)
 EndFunc   ;==>LoadCover
 
 Func Request($URL, $Wait = 5)
+	Return ""
 	FileDelete(@TempDir & "PPlayerDL.tmp")
 	InetGet($URL, @TempDir & "PPlayerDL.tmp", 1, 1)
 	$Timer = TimerInit()

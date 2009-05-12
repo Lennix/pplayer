@@ -31,10 +31,12 @@
 	http://pplayer.wiki.sourceforge.net/Contributors
 #ce
 
-#include <GUIConstants.au3>
-#include <include\XSkin.au3>
-#include <SQLite.au3>
-#include <SQLite.dll.au3>
+#include"include\XSkin.au3"
+#include"include\default\SQLite.au3"
+#include"include\default\SQLite.dll.au3"
+#include"include\default\GUIConstants.au3"
+
+
 
 Opt("TrayAutoPause",0)
 Opt("TrayOnEventMode",1)
@@ -142,7 +144,6 @@ Func Database()
 	Global $Database_Progress = GUICtrlCreateProgress(0+ $factorX, 256, 473, 25, $PBS_SMOOTH)
 	Global $Label1 = GUICtrlCreateLabel("", 0+ $factorX, 160, 100, 89)
 	Global $Label2 = GUICtrlCreateLabel("", 104+ $factorX, 160, 268, 89)
-	Global $OSVersion = @OSVersion
 	GUISetState(@SW_SHOW)
 EndFunc
 
@@ -220,7 +221,7 @@ Func CalcTime($time)
 EndFunc
 
 Func _GetInterpret($path)
-	If $OSVersion == "WIN_VISTA" Then
+	If @OSVersion == "WIN_VISTA" Then
 		return _GetExtProperty($path,13)
 	Else
 		return _GetExtProperty($path,16)
@@ -268,12 +269,12 @@ EndFunc
 
 Func ReadFileInfo($file)
 	Local $tag[8]
-	If $OSVersion == "WIN_XP" Then
+	If @OSVersion == "WIN_XP" Then
 		$tag[1] = _GetExtProperty($file, 16)
 		$tag[2] = _GetExtProperty($file, 17)
 		$tag[3] = _GetExtProperty($file, 10)
 		$tag[4] = _GetExtProperty($file, 20)
-	ElseIf $OSVersion == "WIN_VISTA" Then
+	ElseIf @OSVersion == "WIN_VISTA" Then
 		$tag[1] = _GetExtProperty($file, 13)
 		$tag[2] = _GetExtProperty($file, 14)
 		$tag[3] = _GetExtProperty($file, 21)

@@ -12,7 +12,6 @@ EndFunc
 	
 Func Stream_CreateCustomGUI()
 	StreamBuild()
-	ObjEvent($pobj,"Stream_Event_")
 EndFunc
 
 Func Stream_OnExit()
@@ -67,11 +66,11 @@ Func Stream_Play($id, $Filepath)
 	$LeaveWhile = False
 	PluginTrigger("SongPlayStarted",$id,$filepath)
 	$next_sound = 0
-	If WMGetState() == "Paused" Then Pause()
+	If VLCGetState() == "Paused" Then Pause()
 	Focus($id)
 	$Timer = TimerInit()
 	While 1
-		Switch WMGetState ()
+		Switch VLCGetState ()
 			Case "Ready"
 				$active_sound = Play($Filepath)
 			Case "Stopped"
@@ -85,7 +84,7 @@ Func Stream_Play($id, $Filepath)
 			;$LeaveWhile = True
 			Return ""
 		EndIf
-		UpdateLabelAction(WMGetState ())
+		UpdateLabelAction(VLCGetState ())
 		Sleep(100)
 	WEnd
 	
@@ -98,15 +97,16 @@ Func Stream_Play($id, $Filepath)
 		_GUICtrlListView_SetItemText($StreamListView,$Sel,$Filepath,2)
 		_GUICtrlListView_SetItemText($StreamListView,$Sel,$Status[0])
 	EndIf
-	UpdateLabelAction(WMGetState ())
-	While $playing And Not $LeaveWhile And Not ( WMGetState() == "Stopped" )
+	UpdateLabelAction(VLCGetState ())
+	While $playing And Not $LeaveWhile And Not ( VLCGetState() == "Stopped" )
 		Sleep(100)
 	WEnd
-	WMStop()
+	VLCStop()
 	UnFocus($id)
 	$StreamPlaying = False
 EndFunc   ;==>PlayStream
 
+#cs
 Func Stream_Event_MediaChange($Item)
 	If $StreamPlaying Then
 		Dim $tag[9]
@@ -136,6 +136,7 @@ Func Stream_Event_Buffering($State)
 	debug("Download on " & $Pobj.network.downloadProgress)
 	If $pobj.network.bufferingProgress == 100 Then $StreamChecked = True
 EndFunc
+#ce
 
 Func StreamBuild()
 	Global $StreamGUI = XSkinGUICreate("PPlayer - Stream", 532+$factorX*2, 323+$factorY*2, $Skin_Folder,1,25, IniRead("db\settings.ini", "window", "Streamx", -1), IniRead("db\settings.ini", "window", "Streamy", -1), -1, $MainGUI)
